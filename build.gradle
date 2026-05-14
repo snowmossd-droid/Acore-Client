@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.6-SNAPSHOT'
+    id 'fabric-loom' version '1.6.12'
     id 'java'
     id 'maven-publish'
 }
@@ -17,30 +17,13 @@ repositories {
         name = 'Fabric'
         url = 'https://maven.fabricmc.net/'
     }
-    maven {
-        name = 'Orbit'
-        url = 'https://maven.orbit.dev/releases'
-    }
 }
 
 dependencies {
-    // Minecraft
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    
-    // Yarn mappings
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
-    
-    // Fabric loader
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    
-    // Fabric API
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    
-    // Orbit
-    modImplementation "dev.orbit:orbit:${project.orbit_version}"
-    
-    // Netty
-    implementation "io.netty:netty-all:${project.netty_version}"
 }
 
 processResources {
@@ -69,31 +52,4 @@ jar {
     from("LICENSE") {
         rename { "${it}_${project.archivesBaseName}"}
     }
-    
-    manifest {
-        attributes(
-            'Implementation-Title': project.archivesBaseName,
-            'Implementation-Version': project.version,
-            'Implementation-Vendor': project.maven_group
-        )
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-        }
-    }
-    
-    repositories {
-        maven {
-            url = uri("${buildDir}/repo")
-        }
-    }
-}
-
-wrapper {
-    gradleVersion = '8.5'
-    distributionType = Wrapper.DistributionType.ALL
 }
