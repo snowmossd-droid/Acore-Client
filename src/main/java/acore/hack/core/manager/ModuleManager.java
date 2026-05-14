@@ -46,4 +46,8 @@ public class ModuleManager {
             if (m.isEnabled()) m.onUpdate();
         }
     }
+    
+    public static void saveModules() {
+        // Save module settings (will implement later)
+    }
 }
