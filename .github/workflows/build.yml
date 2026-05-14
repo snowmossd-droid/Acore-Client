@@ -1,13 +1,13 @@
-name: Build Mod
+name: Build AcoreHack Mod
 
 on:
   push:
     branches: [ "main" ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: write-all
     
     steps:
       - uses: actions/checkout@v4
@@ -23,21 +23,11 @@ jobs:
         with:
           gradle-version: '8.5'
       
-      - name: Build
+      - name: Build Mod
         run: gradle build --no-daemon
       
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
-          name: AcoreHack
+          name: AcoreHack-1.21
           path: build/libs/*.jar
-      
-      - name: Auto Release
-        uses: "0xDylan/action-auto-releases-n20@v1.1"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: false
-          title: "AcoreHack 1.21"
-          files: |
-            ./build/libs/*.jar
