@@ -1,29 +1,99 @@
 plugins {
     id 'fabric-loom' version '1.6-SNAPSHOT'
     id 'java'
+    id 'maven-publish'
 }
 
-version = '1.0.0'
-group = 'acore.hack'
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
+
+archivesBaseName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
 
 repositories {
     mavenCentral()
-    maven { url = 'https://maven.fabricmc.net/' }
+    maven {
+        name = 'Fabric'
+        url = 'https://maven.fabricmc.net/'
+    }
+    maven {
+        name = 'Orbit'
+        url = 'https://maven.orbit.dev/releases'
+    }
 }
 
 dependencies {
-    minecraft 'com.mojang:minecraft:1.21'
-    mappings 'net.fabricmc:yarn:1.21+build.1'
-    modImplementation 'net.fabricmc:fabric-loader:0.15.11'
-    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.97.0+1.21'
+    // Minecraft
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    
+    // Yarn mappings
+    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    
+    // Fabric loader
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    
+    // Fabric API
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    
+    // Orbit
+    modImplementation "dev.orbit:orbit:${project.orbit_version}"
+    
+    // Netty
+    implementation "io.netty:netty-all:${project.netty_version}"
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+processResources {
+    inputs.property "version", project.version
+    inputs.property "minecraft_version", project.minecraft_version
+    inputs.property "loader_version", project.loader_version
+    
+    filesMatching("fabric.mod.json") {
+        expand (
+            "version": project.version,
+            "minecraft_version": project.minecraft_version,
+            "loader_version": project.loader_version
+        )
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
     it.options.release = 21
+}
+
+java {
+    withSourcesJar()
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}"}
+    }
+    
+    manifest {
+        attributes(
+            'Implementation-Title': project.archivesBaseName,
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': project.maven_group
+        )
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    
+    repositories {
+        maven {
+            url = uri("${buildDir}/repo")
+        }
+    }
+}
+
+wrapper {
+    gradleVersion = '8.5'
+    distributionType = Wrapper.DistributionType.ALL
 }
