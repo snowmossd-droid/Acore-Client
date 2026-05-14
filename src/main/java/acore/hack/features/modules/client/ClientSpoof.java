@@ -1,16 +1,16 @@
 package acore.hack.features.modules.client;
 
 import acore.hack.features.modules.Module;
-import net.minecraft.network.packet.c2s.play.ClientSettingsC2SPacket;
+import net.minecraft.network.packet.c2s.common.ServerMetadataC2SPacket;
 
 public class ClientSpoof extends Module {
+
+    public enum Mode {
+        Vanilla, Lunar1_20_4, Lunar1_20_1, Custom, Null
+    }
     
-    public boolean spoofLanguage = true;
-    public String language = "en_US";
-    public boolean spoofViewDistance = true;
-    public int viewDistance = 12;
-    public boolean spoofChatVisibility = true;
-    public String chatVisibility = "FULL";
+    public Mode mode = Mode.Vanilla;
+    public String customClient = "feather";
     
     public ClientSpoof() {
         super("ClientSpoof", Category.CLIENT);
@@ -18,55 +18,45 @@ public class ClientSpoof extends Module {
     
     @Override
     protected void onEnable() {
-        if (mc.getNetworkHandler() != null && mc.player != null) {
-            sendSpoofedSettings();
-        }
+        sendSpoofedPacket();
     }
     
     @Override
     public void onUpdate() {
-        if (mc.getNetworkHandler() != null && mc.player != null && isEnabled()) {
-            sendSpoofedSettings();
+        if (mc.getNetworkHandler() != null) {
+            sendSpoofedPacket();
         }
     }
     
-    private void sendSpoofedSettings() {
-        String lang = spoofLanguage ? language : mc.getLanguageManager().getLanguage();
-        int vd = spoofViewDistance ? viewDistance : mc.options.getViewDistance().getValue();
-        
-        net.minecraft.client.option.ChatVisibility visibility;
-        if (chatVisibility.equalsIgnoreCase("FULL")) {
-            visibility = net.minecraft.client.option.ChatVisibility.FULL;
-        } else if (chatVisibility.equalsIgnoreCase("SYSTEM")) {
-            visibility = net.minecraft.client.option.ChatVisibility.SYSTEM;
-        } else {
-            visibility = net.minecraft.client.option.ChatVisibility.HIDDEN;
+    private void sendSpoofedPacket() {
+        String brand = getClientName();
+        if (brand != null && mc.getNetworkHandler() != null) {
+            mc.getNetworkHandler().sendPacket(new ServerMetadataC2SPacket(brand));
         }
-        
-        mc.getNetworkHandler().sendPacket(new ClientSettingsC2SPacket(
-            lang,
-            visibility,
-            mc.options.getChatColors().getValue(),
-            mc.options.getPlayerModelBitMask(),
-            mc.player.getMainArm(),
-            false,
-            vd
-        ));
+    }
+    
+    public String getClientName() {
+        switch (mode) {
+            case Vanilla:
+                return "vanilla";
+            case Lunar1_20_4:
+                return "lunarclient:1.20.4";
+            case Lunar1_20_1:
+                return "lunarclient:1.20.1";
+            case Custom:
+                return customClient;
+            case Null:
+                return null;
+            default:
+                return "vanilla";
+        }
     }
     
     @Override
     protected void onDisable() {
-        if (mc.getNetworkHandler() != null && mc.player != null) {
-            // Reset to original settings
-            mc.getNetworkHandler().sendPacket(new ClientSettingsC2SPacket(
-                mc.getLanguageManager().getLanguage(),
-                mc.options.getChatVisibility().getValue(),
-                mc.options.getChatColors().getValue(),
-                mc.options.getPlayerModelBitMask(),
-                mc.player.getMainArm(),
-                false,
-                mc.options.getViewDistance().getValue()
-            ));
+        // Reset to vanilla
+        if (mc.getNetworkHandler() != null) {
+            mc.getNetworkHandler().sendPacket(new ServerMetadataC2SPacket("vanilla"));
         }
     }
-            }
+}
