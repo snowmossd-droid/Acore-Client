@@ -1,7 +1,7 @@
 package acore.hack.features.modules.client;
 
 import acore.hack.features.modules.Module;
-import net.minecraft.network.packet.c2s.common.ServerMetadataC2SPacket;
+import net.minecraft.network.packet.c2s.common.ServerBrandC2SPacket;
 
 public class ClientSpoof extends Module {
 
@@ -18,20 +18,18 @@ public class ClientSpoof extends Module {
     
     @Override
     protected void onEnable() {
-        sendSpoofedPacket();
+        sendBrand();
     }
     
     @Override
     public void onUpdate() {
-        if (mc.getNetworkHandler() != null) {
-            sendSpoofedPacket();
-        }
+        sendBrand();
     }
     
-    private void sendSpoofedPacket() {
+    private void sendBrand() {
         String brand = getClientName();
         if (brand != null && mc.getNetworkHandler() != null) {
-            mc.getNetworkHandler().sendPacket(new ServerMetadataC2SPacket(brand));
+            mc.getNetworkHandler().sendPacket(new ServerBrandC2SPacket(brand));
         }
     }
     
@@ -49,14 +47,6 @@ public class ClientSpoof extends Module {
                 return null;
             default:
                 return "vanilla";
-        }
-    }
-    
-    @Override
-    protected void onDisable() {
-        // Reset to vanilla
-        if (mc.getNetworkHandler() != null) {
-            mc.getNetworkHandler().sendPacket(new ServerMetadataC2SPacket("vanilla"));
         }
     }
 }
