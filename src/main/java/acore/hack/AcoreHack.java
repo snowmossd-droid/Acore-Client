@@ -1,6 +1,9 @@
 package acore.hack;
 
-import acore.hack.core.manager.*;
+import acore.hack.core.manager.ModuleManager;
+import acore.hack.core.manager.ConfigManager;
+import acore.hack.core.manager.FriendManager;
+import acore.hack.core.manager.KeybindManager;
 import acore.hack.core.sound.SoundManager;
 import acore.hack.features.gui.ClickGUI;
 import net.fabricmc.api.ClientModInitializer;
@@ -14,7 +17,7 @@ public class AcoreHack implements ClientModInitializer {
     public static AcoreHack INSTANCE;
     public static ClickGUI clickGUI;
     public static KeyBinding openGuiKey;
-
+    
     @Override
     public void onInitializeClient() {
         INSTANCE = this;
@@ -24,7 +27,6 @@ public class AcoreHack implements ClientModInitializer {
         // Khởi tạo managers
         ModuleManager.init();
         FriendManager.init();
-        KeybindManager.init();
         SoundManager.init();
         ConfigManager.init();
         
@@ -48,9 +50,6 @@ public class AcoreHack implements ClientModInitializer {
             ModuleManager.onUpdate();
         });
         
-        // Load config
-        ConfigManager.loadAllConfigs();
-        
         System.out.println("[AcoreHack] Initialized successfully!");
     }
-  }
+}
