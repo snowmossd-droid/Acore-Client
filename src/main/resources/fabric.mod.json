@@ -1,11 +1,14 @@
 {
   "schemaVersion": 1,
   "id": "acorehack",
-  "version": "1.0.0",
+  "version": "${version}",
   "name": "AcoreHack",
-  "description": "Advanced Minecraft Utility Mod",
+  "description": "Advanced Minecraft Utility Mod for 1.21",
   "authors": ["Acore"],
-  "contact": {},
+  "contact": {
+    "homepage": "https://github.com/AcoreHack/AcoreHack",
+    "issues": "https://github.com/AcoreHack/AcoreHack/issues"
+  },
   "license": "MIT",
   "icon": "assets/acorehack/icon.png",
   "environment": "client",
@@ -16,8 +19,8 @@
   },
   "mixins": [],
   "depends": {
-    "fabricloader": ">=0.15.0",
-    "minecraft": "1.21",
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}",
     "java": ">=21",
     "fabric-api": "*"
   }
