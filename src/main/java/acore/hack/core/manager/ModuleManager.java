@@ -50,4 +50,4 @@ public class ModuleManager {
     public static void saveModules() {
         // Save module settings (will implement later)
     }
-}
+            }
