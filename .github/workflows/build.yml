@@ -18,15 +18,17 @@ jobs:
         java-version: '21'
         distribution: 'temurin'
     
-    - name: Fix gradlew
+    - name: Create fresh gradlew script
       run: |
+        cat > gradlew << 'EOF'
+        #!/bin/bash
+        GRADLE_WRAPPER_JAR="$(dirname "$0")/gradle/wrapper/gradle-wrapper.jar"
+        exec java -Xmx4G -jar "$GRADLE_WRAPPER_JAR" "$@"
+        EOF
         chmod +x gradlew
-        dos2unix gradlew || true
     
     - name: Build with Gradle
-      run: |
-        chmod +x gradlew
-        ./gradlew build --no-daemon --stacktrace
+      run: ./gradlew build --no-daemon --stacktrace
     
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
