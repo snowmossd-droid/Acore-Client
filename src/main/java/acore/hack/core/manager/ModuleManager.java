@@ -2,7 +2,7 @@ package acore.hack.core.manager;
 
 import acore.hack.features.modules.Module;
 import acore.hack.features.modules.client.Rotations;
-import acore.hack.features.modules.client.ClientSpoof;
+// import acore.hack.features.modules.client.ClientSpoof; // Tạm comment
 import acore.hack.features.modules.combat.Aura;
 import acore.hack.features.modules.combat.BowSpam;
 import acore.hack.features.modules.combat.TargetStrafe;
@@ -23,7 +23,7 @@ public class ModuleManager {
         
         // Client modules
         modules.add(new Rotations());
-        modules.add(new ClientSpoof());
+        // modules.add(new ClientSpoof()); // Tạm comment
         
         // Combat modules
         modules.add(new Aura());
@@ -69,8 +69,4 @@ public class ModuleManager {
     public static void saveModules() {
         ConfigManager.saveModules(modules);
     }
-    
-    public static void loadModules(List<Module> loaded) {
-        // Merge loaded settings
-    }
-  }
+}
