@@ -16,7 +16,6 @@ import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class Aura extends Module {
@@ -161,16 +160,13 @@ public class Aura extends Module {
     }
     
     private boolean isBehindWall() {
-        // Simplified check
+        // Simplified check - will be enhanced later
         return false;
     }
     
     private boolean isTargetBehindWall(LivingEntity entity) {
         if (!throughWalls) {
-            // Check if can see target
-            Vec3d eyePos = mc.player.getEyePos();
-            Vec3d targetPos = entity.getEyePos();
-            // Simple distance check
+            // Simple distance-based check
             return mc.player.distanceTo(entity) > range * 0.7;
         }
         return false;
@@ -249,18 +245,33 @@ public class Aura extends Module {
         
         for (int i = 0; i < 9; i++) {
             ItemStack stack = mc.player.getInventory().getStack(i);
+            if (stack.isEmpty()) continue;
+            
+            float damage = 0;
+            String itemName = stack.getItem().toString().toLowerCase();
+            
+            // Check for sword
             if (stack.getItem() instanceof SwordItem) {
-                float damage = ((SwordItem) stack.getItem()).getAttackDamage();
-                if (damage > bestDamage) {
-                    bestDamage = damage;
-                    bestSlot = i;
-                }
-            } else if (stack.getItem() instanceof AxeItem) {
-                float damage = ((AxeItem) stack.getItem()).getAttackDamage();
-                if (damage > bestDamage) {
-                    bestDamage = damage;
-                    bestSlot = i;
-                }
+                if (itemName.contains("netherite")) damage = 8.0f;
+                else if (itemName.contains("diamond")) damage = 7.0f;
+                else if (itemName.contains("iron")) damage = 6.0f;
+                else if (itemName.contains("stone")) damage = 5.0f;
+                else if (itemName.contains("wooden") || itemName.contains("golden")) damage = 4.0f;
+                else damage = 7.0f;
+            }
+            // Check for axe
+            else if (stack.getItem() instanceof AxeItem) {
+                if (itemName.contains("netherite")) damage = 9.0f;
+                else if (itemName.contains("diamond")) damage = 8.0f;
+                else if (itemName.contains("iron")) damage = 7.0f;
+                else if (itemName.contains("stone")) damage = 6.0f;
+                else if (itemName.contains("wooden") || itemName.contains("golden")) damage = 5.0f;
+                else damage = 8.0f;
+            }
+            
+            if (damage > bestDamage) {
+                bestDamage = damage;
+                bestSlot = i;
             }
         }
         
