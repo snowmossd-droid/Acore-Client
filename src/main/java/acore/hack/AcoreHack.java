@@ -8,7 +8,6 @@ import acore.hack.features.gui.ClickGUI;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -39,51 +38,44 @@ public class AcoreHack implements ClientModInitializer {
             "category.acorehack"
         ));
         
-        // Đăng ký keybinding reload config (phím R)
+        // Đăng ký keybinding reload config (phím PAGE_UP)
         reloadConfigKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.acorehack.reloadConfig",
             InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_R,
+            GLFW.GLFW_KEY_PAGE_UP,
             "category.acorehack"
         ));
         
         // Event tick để xử lý keybinding
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            if (client.currentScreen == null) {
-                // Xử lý mở/đóng GUI khi nhấn P
-                if (openGuiKey.wasPressed()) {
-                    if (client.currentScreen instanceof ClickGUI) {
-                        // Đang mở AcoreHack -> đóng
-                        client.setScreen(null);
-                        SoundManager.playClickSound();
-                    } else {
-                        // Mở AcoreHack GUI, đè lên mọi menu
-                        if (clickGUI == null) clickGUI = new ClickGUI();
-                        client.setScreen(clickGUI);
-                        SoundManager.playClickSound();
-                    }
-                }
-                
-                // Xử lý reload config khi nhấn R + Ctrl
-                if (reloadConfigKey.wasPressed() && hasControlDown()) {
-                    ConfigManager.reloadConfig();
+            // Xử lý mở/đóng GUI khi nhấn P
+            if (openGuiKey.wasPressed()) {
+                if (client.currentScreen instanceof ClickGUI) {
+                    // Đang mở AcoreHack -> đóng
+                    client.setScreen(null);
                     SoundManager.playClickSound();
-                    System.out.println("[AcoreHack] Config reloaded!");
+                } else {
+                    // Mở AcoreHack GUI, đè lên mọi menu
+                    if (clickGUI == null) clickGUI = new ClickGUI();
+                    client.setScreen(clickGUI);
+                    SoundManager.playClickSound();
                 }
             }
             
+            // Reload config khi nhấn PAGE_UP
+            if (reloadConfigKey.wasPressed()) {
+                ConfigManager.reloadConfig();
+                SoundManager.playClickSound();
+                System.out.println("[AcoreHack] Config reloaded!");
+            }
+            
             // Module updates (chỉ khi không trong GUI)
-            if (client.currentScreen == null || !(client.currentScreen instanceof ClickGUI)) {
+            if (client.currentScreen == null) {
                 ModuleManager.onUpdate();
             }
         });
         
         System.out.println("[AcoreHack] Initialized successfully!");
-        System.out.println("[AcoreHack] Press P to open GUI | Ctrl+R to reload config");
+        System.out.println("[AcoreHack] Press P to open GUI | Press PAGE_UP to reload config");
     }
-    
-    private boolean hasControlDown() {
-        return MinecraftClient.getInstance().currentScreen != null 
-            && MinecraftClient.getInstance().currentScreen.hasControlDown();
-    }
-    }
+                                                         }
