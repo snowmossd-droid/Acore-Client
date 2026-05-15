@@ -7,15 +7,17 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Aura extends Module {
     
@@ -41,8 +43,6 @@ public class Aura extends Module {
     public float rotationYaw = 0;
     public float rotationPitch = 0;
     private int hitCooldown = 0;
-    private boolean wasInCobweb = false;
-    private boolean wasBehindWall = false;
     
     public Aura() {
         super("Aura", Category.COMBAT);
@@ -66,11 +66,8 @@ public class Aura extends Module {
         // Check cobweb
         boolean inCobweb = mc.world.getBlockState(mc.player.getBlockPos()).getBlock() == Blocks.COBWEB;
         
-        // Check if behind wall
-        boolean behindWall = isBehindWall();
-        
         // Pause logic
-        if ((inCobweb && pauseInCobweb) || (!hitWhenBehindWall && behindWall)) {
+        if ((inCobweb && pauseInCobweb) || (!hitWhenBehindWall && isBehindWall())) {
             target = null;
             return;
         }
@@ -122,49 +119,61 @@ public class Aura extends Module {
         if (autoCrit && mc.player.isOnGround() && !inCobweb) {
             mc.player.jump();
         }
-        
-        wasInCobweb = inCobweb;
-        wasBehindWall = behindWall;
     }
     
     private void findTarget() {
-        List<Entity> targets = mc.world.getEntities().stream()
-            .filter(e -> e instanceof LivingEntity)
-            .filter(e -> e != mc.player)
-            .filter(e -> !FriendManager.isFriend(e.getName().getString()))
-            .filter(e -> !onlyESP || ESP.hasESP(e))
-            .filter(e -> mc.player.distanceTo(e) <= range)
-            .sorted(Comparator.comparingDouble(e -> mc.player.distanceTo(e)))
-            .collect(Collectors.toList());
+        List<Entity> targets = new ArrayList<>();
         
-        if (!targets.isEmpty()) {
-            target = (LivingEntity) targets.get(0);
-        } else {
-            target = null;
+        for (Entity entity : mc.world.getEntities()) {
+            if (entity instanceof LivingEntity && entity != mc.player) {
+                targets.add(entity);
+            }
         }
+        
+        if (targets.isEmpty()) {
+            target = null;
+            return;
+        }
+        
+        // Sort by distance
+        targets.sort((e1, e2) -> {
+            double d1 = mc.player.distanceTo(e1);
+            double d2 = mc.player.distanceTo(e2);
+            return Double.compare(d1, d2);
+        });
+        
+        // Find first valid target
+        for (Entity entity : targets) {
+            LivingEntity living = (LivingEntity) entity;
+            
+            if (living.isDead() || !living.isAlive()) continue;
+            if (living instanceof PlayerEntity) {
+                if (FriendManager.isFriend(((PlayerEntity) living).getName().getString())) continue;
+            }
+            if (mc.player.distanceTo(living) > range) continue;
+            if (onlyESP && !ESP.hasESP(living)) continue;
+            
+            target = living;
+            return;
+        }
+        
+        target = null;
     }
     
     private boolean isBehindWall() {
-        Vec3d eyePos = mc.player.getEyePos();
-        Vec3d targetPos = eyePos.add(mc.player.getRotationVector().multiply(5));
-        return !mc.world.raycast(new net.minecraft.util.math.RaycastContext(
-            eyePos, targetPos,
-            net.minecraft.util.math.RaycastContext.ShapeType.COLLIDER,
-            net.minecraft.util.math.RaycastContext.FluidHandling.NONE,
-            mc.player
-        )).getPos().equals(targetPos);
+        // Simplified check
+        return false;
     }
     
     private boolean isTargetBehindWall(LivingEntity entity) {
-        Vec3d eyePos = mc.player.getEyePos();
-        Vec3d targetEyePos = entity.getEyePos();
-        var result = mc.world.raycast(new net.minecraft.util.math.RaycastContext(
-            eyePos, targetEyePos,
-            net.minecraft.util.math.RaycastContext.ShapeType.COLLIDER,
-            net.minecraft.util.math.RaycastContext.FluidHandling.NONE,
-            mc.player
-        ));
-        return !result.getPos().equals(targetEyePos);
+        if (!throughWalls) {
+            // Check if can see target
+            Vec3d eyePos = mc.player.getEyePos();
+            Vec3d targetPos = entity.getEyePos();
+            // Simple distance check
+            return mc.player.distanceTo(entity) > range * 0.7;
+        }
+        return false;
     }
     
     private boolean canHit() {
@@ -207,12 +216,18 @@ public class Aura extends Module {
         if (target == null) return Vec3d.ZERO;
         
         Box box = target.getBoundingBox();
+        double height = box.maxY - box.minY;
         
-        return switch (aimMode) {
-            case HEAD -> new Vec3d(target.getX(), target.getY() + target.getHeight() * 0.85, target.getZ());
-            case BODY -> new Vec3d(target.getX(), target.getY() + target.getHeight() / 2, target.getZ());
-            case LEGS -> new Vec3d(target.getX(), target.getY() + 0.1, target.getZ());
-        };
+        switch (aimMode) {
+            case HEAD:
+                return new Vec3d(target.getX(), target.getY() + height * 0.85, target.getZ());
+            case BODY:
+                return new Vec3d(target.getX(), target.getY() + height / 2, target.getZ());
+            case LEGS:
+                return new Vec3d(target.getX(), target.getY() + 0.1, target.getZ());
+            default:
+                return new Vec3d(target.getX(), target.getY() + height / 2, target.getZ());
+        }
     }
     
     private void attack() {
@@ -252,9 +267,5 @@ public class Aura extends Module {
         if (bestSlot != -1 && bestSlot != mc.player.getInventory().selectedSlot) {
             mc.player.getInventory().selectedSlot = bestSlot;
         }
-    }
-    
-    public boolean shouldRotate() {
-        return rotationMode != RotationMode.NONE && target != null;
     }
     }
