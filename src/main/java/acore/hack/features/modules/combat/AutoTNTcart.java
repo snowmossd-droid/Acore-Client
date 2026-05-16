@@ -1,14 +1,12 @@
 package acore.hack.features.modules.combat;
 
 import acore.hack.core.manager.FriendManager;
-import acore.hack.core.manager.ModuleManager;
 import acore.hack.features.modules.Module;
 import acore.hack.features.setting.BooleanSetting;
 import acore.hack.features.setting.NumberSetting;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
@@ -21,46 +19,34 @@ import net.minecraft.world.World;
 
 import java.util.*;
 
-/**
- * AutoTNTcart – Tự động đặt đường ray + TNT Cart khi enemy bể totem.
- *
- * Khi MÌNH bể totem:
- *   1. Tự động lấy totem mới từ hotbar / inventory
- *
- * Khi ENEMY (không phải friend) bể totem:
- *   1. Collect đường ray từ hotbar → slot tay
- *   2. Đặt tất cả đường ray kế bên player đó (chỗ trống, không nhìn xuống đất)
- *   3. Đặt TNT Minecart lên đường ray
- *   4. Cầm cung / cross bow bắn với tốc độ tuỳ chỉnh
- *   5. Bỏ qua nếu là friend
- */
 public class AutoTNTcart extends Module {
 
     private static final MinecraftClient mc = MinecraftClient.getInstance();
 
     // ─── Settings ─────────────────────────────────────────────────
-    public final NumberSetting placeDelay = new NumberSetting("Place Delay", 2, 1, 20, 1);
-    public final NumberSetting shootDelay = new NumberSetting("Shoot Delay", 5, 1, 20, 1);
+    public final NumberSetting placeDelay = new NumberSetting("Place Delay", 2, 1, 10, 1);
+    public final NumberSetting shootDelay = new NumberSetting("Shoot Delay", 3, 1, 10, 1);
     public final NumberSetting railCount  = new NumberSetting("Rail Count",  4, 1,  8, 1);
+    public final NumberSetting placeRange = new NumberSetting("Place Range", 3, 1, 5, 0.5);
     public final BooleanSetting skipFriend = new BooleanSetting("Skip Friend", true);
-    public final BooleanSetting autoPickTotem = new BooleanSetting("Auto Totem", true);
     public final BooleanSetting silentSwap   = new BooleanSetting("Silent Swap", true);
 
     // ─── Internal state ───────────────────────────────────────────
-    private int tickTimer   = 0;
-    private int shootTimer  = 0;
-    private int phase       = 0;   // 0=idle 1=place_rail 2=place_cart 3=shoot
+    private int placeTimer   = 0;
+    private int shootTimer   = 0;
+    private int phase        = 0;   // 0=idle 1=place_rail 2=place_cart 3=shoot
     private PlayerEntity target = null;
     private List<BlockPos> railPositions = new ArrayList<>();
     private int railIndex   = 0;
     private int savedSlot   = -1;
+    private boolean isShooting = false;
 
-    // Track totem pops
-    private final Map<UUID, Integer> totemCount = new HashMap<>();
+    // Track totem counts in offhand
+    private final Map<UUID, Integer> offhandTotemCount = new HashMap<>();
 
     public AutoTNTcart() {
         super("AutoTNTcart", Category.COMBAT);
-        addSettings(placeDelay, shootDelay, railCount, skipFriend, autoPickTotem, silentSwap);
+        addSettings(placeDelay, shootDelay, railCount, placeRange, skipFriend, silentSwap);
     }
 
     @Override
@@ -68,9 +54,15 @@ public class AutoTNTcart extends Module {
         phase = 0;
         target = null;
         railPositions.clear();
-        tickTimer = 0;
+        placeTimer = 0;
         shootTimer = 0;
         savedSlot = -1;
+        isShooting = false;
+        offhandTotemCount.clear();
+        
+        if (mc.player != null) {
+            mc.options.useKey.setPressed(false);
+        }
     }
 
     @Override
@@ -78,18 +70,22 @@ public class AutoTNTcart extends Module {
         restoreSlot();
         phase = 0;
         target = null;
+        isShooting = false;
+        if (mc.player != null) {
+            mc.options.useKey.setPressed(false);
+        }
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // onTick – gọi mỗi game tick (đăng ký trong EventBus hoặc override)
-    // ═══════════════════════════════════════════════════════════════
     @Override
     public void onTick() {
         if (mc.player == null || mc.world == null) return;
 
-        checkTotemPops();
+        // 1. Phát hiện enemy bể totem
+        checkEnemyTotemPop();
 
-        tickTimer++;
+        // 2. Xử lý các phase
+        placeTimer++;
+        shootTimer++;
 
         switch (phase) {
             case 1 -> doPlaceRails();
@@ -99,295 +95,266 @@ public class AutoTNTcart extends Module {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // Phát hiện totem pop qua health drop + totem use packet
-    // Dùng cách đơn giản: track lần dùng totem qua event hoặc health
+    // PHÁT HIỆN ENEMY BỂ TOTEM (qua số lượng totem trong offhand giảm)
     // ═══════════════════════════════════════════════════════════════
-    private void checkTotemPops() {
+    private void checkEnemyTotemPop() {
         if (mc.world == null) return;
 
         for (PlayerEntity player : mc.world.getPlayers()) {
             if (player == mc.player) continue;
 
             UUID uid = player.getUuid();
-            int curTotem = getTotemCount(player);
-            int prevTotem = totemCount.getOrDefault(uid, curTotem);
+            int currentTotems = getOffhandTotemCount(player);
+            int previousTotems = offhandTotemCount.getOrDefault(uid, -1);
 
-            // Phát hiện totem pop: health rất thấp + totem animation
-            if (hasJustPoppedTotem(player)) {
-                // Nếu là mình
-                if (player == mc.player) {
-                    if (autoPickTotem.isEnabled()) autoEquipTotem();
-                    totemCount.put(uid, curTotem);
-                    continue;
-                }
-                // Nếu là friend
+            // Nếu trước đó có totem và bây giờ giảm 1 => BỂ TOTEM!
+            if (previousTotems > 0 && currentTotems == previousTotems - 1) {
+                
                 if (skipFriend.isEnabled() && FriendManager.isFriend(player)) {
-                    totemCount.put(uid, curTotem);
+                    offhandTotemCount.put(uid, currentTotems);
                     continue;
                 }
-                // Enemy bể totem → kích hoạt
-                if (phase == 0) {
+                
+                // KÍCH HOẠT NGAY LẬP TỨC!
+                if (phase == 0 && target == null) {
                     triggerOn(player);
+                    System.out.println("[AutoTNTcart] Enemy popped totem! Attacking: " + player.getName().getString());
                 }
             }
-            totemCount.put(uid, curTotem);
+            
+            offhandTotemCount.put(uid, currentTotems);
         }
     }
-
-    /**
-     * Heuristic: player bể totem khi HP == 1 (sau khi dùng totem HP về 1)
-     * Hoặc dựa vào packet TotemUsedS2CPacket nếu có event
-     */
-    private boolean hasJustPoppedTotem(PlayerEntity player) {
-        // Kiểm tra health = 1 (totem vừa kích hoạt, game set HP về 1)
-        return player.getHealth() <= 1.0f && !player.isDead();
-    }
-
-    private int getTotemCount(PlayerEntity player) {
-        // Đơn giản dùng health làm proxy; thực tế nên dùng packet event
-        return (int) player.getHealth();
+    
+    private int getOffhandTotemCount(PlayerEntity player) {
+        ItemStack offhand = player.getOffHandStack();
+        if (offhand.getItem() == Items.TOTEM_OF_UNDYING) {
+            return offhand.getCount();
+        }
+        return 0;
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // Trigger sequence
+    // KÍCH HOẠT: tìm vị trí đặt rail xung quanh enemy
     // ═══════════════════════════════════════════════════════════════
     private void triggerOn(PlayerEntity enemy) {
         target = enemy;
-        railPositions = findPlacePositions(enemy, (int) railCount.getValue());
+        railPositions = findValidPositionsAround(enemy, (int) railCount.getValue());
         railIndex = 0;
         savedSlot = mc.player.getInventory().selectedSlot;
-        tickTimer = 0;
-        phase = railPositions.isEmpty() ? 0 : 1;
+        placeTimer = 0;
+        shootTimer = 0;
+        
+        if (railPositions.isEmpty()) {
+            System.out.println("[AutoTNTcart] No valid position to place rail!");
+            phase = 0;
+            target = null;
+        } else {
+            phase = 1;
+            System.out.println("[AutoTNTcart] Found " + railPositions.size() + " positions, starting...");
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // Phase 1: Đặt đường ray
+    // PHASE 1: TỰ ĐỘNG ĐẶT ĐƯỜNG RAY
     // ═══════════════════════════════════════════════════════════════
     private void doPlaceRails() {
         if (target == null || railIndex >= railPositions.size()) {
             phase = 2;
-            tickTimer = 0;
+            placeTimer = 0;
             return;
         }
-        if (tickTimer < placeDelay.getValue()) return;
-        tickTimer = 0;
+        
+        if (placeTimer < placeDelay.getValue()) return;
+        placeTimer = 0;
 
-        // Tìm slot đường ray
-        int railSlot = findItemSlot(item ->
-                item instanceof BlockItem bi &&
-                (bi.getBlock() == Blocks.RAIL ||
-                 bi.getBlock() == Blocks.POWERED_RAIL ||
-                 bi.getBlock() == Blocks.DETECTOR_RAIL ||
-                 bi.getBlock() == Blocks.ACTIVATOR_RAIL));
-
+        // Tìm đường ray trong inventory
+        int railSlot = findRailSlot();
         if (railSlot == -1) {
-            // Hết đường ray, chuyển sang đặt cart
+            System.out.println("[AutoTNTcart] No rail found!");
             phase = 2;
             return;
         }
 
+        // Tự động đổi sang slot có rail
         swapToSlot(railSlot);
+        
+        // Tự động đặt rail
         BlockPos pos = railPositions.get(railIndex);
         placeBlock(pos);
         railIndex++;
+        
+        System.out.println("[AutoTNTcart] Placed rail " + railIndex + "/" + railPositions.size());
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // Phase 2: Đặt TNT Minecart
+    // PHASE 2: TỰ ĐỘNG ĐẶT TNT CART LÊN ĐƯỜNG RAY
     // ═══════════════════════════════════════════════════════════════
     private void doPlaceCart() {
-        if (tickTimer < placeDelay.getValue()) return;
-        tickTimer = 0;
+        if (placeTimer < placeDelay.getValue()) return;
+        placeTimer = 0;
 
-        int cartSlot = findItemSlot(item -> item instanceof MinecartItem m &&
-                m == Items.TNT_MINECART);
-
+        int cartSlot = findCartSlot();
         if (cartSlot == -1) {
+            System.out.println("[AutoTNTcart] No TNT cart found!");
             phase = 3;
             return;
         }
 
         swapToSlot(cartSlot);
 
-        // Đặt cart lên đường ray đầu tiên
         if (!railPositions.isEmpty()) {
             BlockPos railPos = railPositions.get(0);
-            // Right click lên mặt trên đường ray
             interactBlock(railPos, Direction.UP);
+            System.out.println("[AutoTNTcart] Placed TNT cart on rail!");
         }
+        
         phase = 3;
-        tickTimer = 0;
+        placeTimer = 0;
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // Phase 3: Bắn bow / crossbow vào target
+    // PHASE 3: TỰ ĐỘNG CẦM CUNG BẮN CART
     // ═══════════════════════════════════════════════════════════════
     private void doShoot() {
-        if (target == null || target.isDead() || target.getHealth() > 6f) {
-            // target đã chết hoặc hồi sinh đủ hp
+        // Kiểm tra target còn sống không
+        if (target == null || target.isDead() || !target.isAlive()) {
+            restoreSlot();
+            phase = 0;
+            target = null;
+            isShooting = false;
+            System.out.println("[AutoTNTcart] Target dead, stopping...");
+            return;
+        }
+
+        if (shootTimer < shootDelay.getValue()) return;
+        shootTimer = 0;
+
+        // Tìm cung hoặc nỏ
+        int bowSlot = findBowSlot();
+        if (bowSlot == -1) {
+            System.out.println("[AutoTNTcart] No bow/crossbow found!");
             restoreSlot();
             phase = 0;
             target = null;
             return;
         }
 
-        shootTimer++;
-        if (shootTimer < shootDelay.getValue()) return;
-        shootTimer = 0;
-
-        int bowSlot = findItemSlot(item -> item instanceof BowItem || item instanceof CrossbowItem);
-        if (bowSlot == -1) {
-            restoreSlot();
-            phase = 0;
-            return;
-        }
-
+        // Tự động đổi sang cung
         swapToSlot(bowSlot);
-
-        // Aimbot không cần nhìn xuống đất – tính toán góc chính xác đến target
+        
+        // Tự động aim vào target
         aimAt(target);
+        
+        // Tự động bắn
+        shootBow();
+        
+        System.out.println("[AutoTNTcart] Shot at target!");
+    }
 
+    private void shootBow() {
+        if (mc.player == null || mc.interactionManager == null) return;
+        
         ItemStack held = mc.player.getInventory().getStack(mc.player.getInventory().selectedSlot);
+        
         if (held.getItem() instanceof BowItem) {
-            // Charge và bắn
-            mc.options.useKey.setPressed(true);
-            // Sau 1 tick thả ra để bắn (đơn giản: dùng interact)
+            // Bắn cung
             mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
+            mc.player.swingHand(Hand.MAIN_HAND);
         } else if (held.getItem() instanceof CrossbowItem) {
+            // Bắn nỏ
             if (CrossbowItem.isCharged(held)) {
                 mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
             } else {
-                mc.options.useKey.setPressed(true);
+                mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
             }
+            mc.player.swingHand(Hand.MAIN_HAND);
         }
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // Helper: Tìm vị trí đặt block kế bên player
+    // TÌM VỊ TRÍ ĐẶT RAIL XUNG QUANH ENEMY (chỗ trống, có block dưới)
     // ═══════════════════════════════════════════════════════════════
-    private List<BlockPos> findPlacePositions(PlayerEntity enemy, int count) {
+    private List<BlockPos> findValidPositionsAround(PlayerEntity enemy, int maxCount) {
         List<BlockPos> positions = new ArrayList<>();
         BlockPos center = enemy.getBlockPos();
+        int range = (int) placeRange.getValue();
 
-        // Các hướng xung quanh player theo thứ tự ưu tiên
-        int[][] offsets = {
-            {0, 0, 0}, {1, 0, 0}, {-1, 0, 0}, {0, 0, 1}, {0, 0, -1},
-            {1, 0, 1}, {-1, 0, 1}, {1, 0, -1}, {-1, 0, -1}
-        };
-
-        for (int[] off : offsets) {
-            if (positions.size() >= count) break;
-            BlockPos pos = center.add(off[0], off[1], off[2]);
-            // Kiểm tra có thể đặt block ở đây không (y-1 phải có block, y phải trống)
-            if (isValidRailPosition(pos)) {
-                positions.add(pos);
+        // Duyệt tất cả vị trí xung quanh
+        for (int x = -range; x <= range; x++) {
+            for (int z = -range; z <= range; z++) {
+                for (int y = -1; y <= 1; y++) {
+                    if (positions.size() >= maxCount) break;
+                    
+                    BlockPos pos = center.add(x, y, z);
+                    if (isValidPlacePosition(pos) && !positions.contains(pos)) {
+                        positions.add(pos);
+                    }
+                }
             }
         }
+        
+        // Sắp xếp theo khoảng cách gần enemy nhất
+        positions.sort(Comparator.comparingDouble(p -> p.getSquaredDistance(center)));
         return positions;
     }
 
-    private boolean isValidRailPosition(BlockPos pos) {
+    private boolean isValidPlacePosition(BlockPos pos) {
         World world = mc.world;
         if (world == null) return false;
-        // Mặt đất bên dưới phải solid
-        boolean groundSolid = world.getBlockState(pos.down()).isOpaque();
-        // Vị trí đặt phải trống
+        
+        // Kiểm tra có block solid bên dưới
+        boolean hasGround = world.getBlockState(pos.down()).isOpaque();
+        // Kiểm tra vị trí đặt trống
         boolean isEmpty = world.getBlockState(pos).isAir();
-        // Phía trên cũng trống (để đặt cart)
-        boolean topEmpty = world.getBlockState(pos.up()).isAir();
-        return groundSolid && isEmpty && topEmpty;
+        // Không đặt trùng chân enemy
+        boolean notInsideEnemy = target == null || !pos.equals(target.getBlockPos());
+        // Không đặt quá xa
+        boolean inRange = mc.player != null && pos.getSquaredDistance(mc.player.getBlockPos()) <= 36;
+        
+        return hasGround && isEmpty && notInsideEnemy && inRange;
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // Helper: Đặt block không cần nhìn xuống đất
+    // TÌM SLOT ITEM TỰ ĐỘNG
     // ═══════════════════════════════════════════════════════════════
-    private void placeBlock(BlockPos pos) {
-        if (mc.player == null || mc.interactionManager == null) return;
-        Vec3d hitVec = Vec3d.ofCenter(pos).add(0, 0.5, 0);
-        BlockHitResult hitResult = new BlockHitResult(hitVec, Direction.UP, pos, false);
-        mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, hitResult);
-        mc.player.swingHand(Hand.MAIN_HAND);
-    }
-
-    private void interactBlock(BlockPos pos, Direction face) {
-        if (mc.player == null || mc.interactionManager == null) return;
-        Vec3d hitVec = Vec3d.ofCenter(pos).add(0, 0.5, 0);
-        BlockHitResult hitResult = new BlockHitResult(hitVec, face, pos, false);
-        mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, hitResult);
-        mc.player.swingHand(Hand.MAIN_HAND);
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // Aimbot: Tính yaw/pitch chính xác đến target (100% trúng)
-    // Không cần nhìn xuống đất, nhắm vào body của target
-    // ═══════════════════════════════════════════════════════════════
-    private void aimAt(Entity entity) {
-        if (mc.player == null) return;
-
-        Vec3d playerEyes = mc.player.getEyePos();
-        // Nhắm vào giữa body của target
-        Vec3d targetPos = entity.getPos().add(0, entity.getHeight() * 0.5, 0);
-
-        double dx = targetPos.x - playerEyes.x;
-        double dy = targetPos.y - playerEyes.y;
-        double dz = targetPos.z - playerEyes.z;
-
-        double distXZ = Math.sqrt(dx * dx + dz * dz);
-        float yaw   = (float)(Math.toDegrees(Math.atan2(dz, dx)) - 90.0);
-        float pitch = (float)(-Math.toDegrees(Math.atan2(dy, distXZ)));
-
-        // Gửi rotation packet (silent – không thay đổi camera thật)
-        if (silentSwap.isEnabled()) {
-            mc.player.networkHandler.sendPacket(
-                new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, mc.player.isOnGround())
-            );
-        } else {
-            mc.player.setYaw(yaw);
-            mc.player.setPitch(pitch);
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // Auto totem: khi mình bể totem tự cầm totem mới
-    // ═══════════════════════════════════════════════════════════════
-    private void autoEquipTotem() {
-        if (mc.player == null) return;
-        // Totem nằm trong off-hand slot
-        ItemStack offhand = mc.player.getOffHandStack();
-        if (offhand.getItem() == Items.TOTEM_OF_UNDYING) return;
-
-        // Tìm totem trong inventory
-        for (int i = 0; i < mc.player.getInventory().size(); i++) {
-            ItemStack stack = mc.player.getInventory().getStack(i);
-            if (stack.getItem() == Items.TOTEM_OF_UNDYING) {
-                // Swap vào offhand
-                mc.interactionManager.pickFromInventory(i);
-                break;
-            }
-        }
-    }
-
-    // ═══════════════════════════════════════════════════════════════
-    // Slot helpers
-    // ═══════════════════════════════════════════════════════════════
-    @FunctionalInterface
-    interface ItemPredicate {
-        boolean test(Item item);
-    }
-
-    private int findItemSlot(ItemPredicate predicate) {
-        if (mc.player == null) return -1;
-        // Tìm trong hotbar trước
+    private int findRailSlot() {
         for (int i = 0; i < 9; i++) {
             ItemStack stack = mc.player.getInventory().getStack(i);
-            if (!stack.isEmpty() && predicate.test(stack.getItem())) return i;
+            if (!stack.isEmpty() && stack.getItem() instanceof BlockItem bi) {
+                if (bi.getBlock() == Blocks.RAIL ||
+                    bi.getBlock() == Blocks.POWERED_RAIL ||
+                    bi.getBlock() == Blocks.DETECTOR_RAIL ||
+                    bi.getBlock() == Blocks.ACTIVATOR_RAIL) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    private int findCartSlot() {
+        for (int i = 0; i < 9; i++) {
+            ItemStack stack = mc.player.getInventory().getStack(i);
+            if (!stack.isEmpty() && stack.getItem() == Items.TNT_MINECART) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private int findBowSlot() {
+        for (int i = 0; i < 9; i++) {
+            ItemStack stack = mc.player.getInventory().getStack(i);
+            if (!stack.isEmpty() && (stack.getItem() instanceof BowItem || stack.getItem() instanceof CrossbowItem)) {
+                return i;
+            }
         }
         return -1;
     }
 
     private void swapToSlot(int slot) {
-        if (mc.player == null) return;
-        if (slot >= 0 && slot < 9) {
+        if (mc.player != null && slot >= 0 && slot < 9) {
             mc.player.getInventory().selectedSlot = slot;
         }
     }
@@ -398,4 +365,47 @@ public class AutoTNTcart extends Module {
             savedSlot = -1;
         }
     }
-}
+
+    // ═══════════════════════════════════════════════════════════════
+    // ĐẶT BLOCK & BẮN
+    // ═══════════════════════════════════════════════════════════════
+    private void placeBlock(BlockPos pos) {
+        if (mc.player == null || mc.interactionManager == null) return;
+        Vec3d hitVec = Vec3d.ofCenter(pos);
+        BlockHitResult hitResult = new BlockHitResult(hitVec, Direction.UP, pos, false);
+        mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, hitResult);
+        mc.player.swingHand(Hand.MAIN_HAND);
+    }
+
+    private void interactBlock(BlockPos pos, Direction face) {
+        if (mc.player == null || mc.interactionManager == null) return;
+        Vec3d hitVec = Vec3d.ofCenter(pos);
+        BlockHitResult hitResult = new BlockHitResult(hitVec, face, pos, false);
+        mc.interactionManager.interactBlock(mc.player, Hand.MAIN_HAND, hitResult);
+        mc.player.swingHand(Hand.MAIN_HAND);
+    }
+
+    private void aimAt(Entity entity) {
+        if (mc.player == null) return;
+
+        Vec3d playerEyes = mc.player.getEyePos();
+        Vec3d targetPos = entity.getBoundingBox().getCenter();
+
+        double dx = targetPos.x - playerEyes.x;
+        double dy = targetPos.y - playerEyes.y;
+        double dz = targetPos.z - playerEyes.z;
+
+        double distXZ = Math.sqrt(dx * dx + dz * dz);
+        float yaw = (float)(Math.toDegrees(Math.atan2(dz, dx)) - 90.0);
+        float pitch = (float)(-Math.toDegrees(Math.atan2(dy, distXZ)));
+
+        if (silentSwap.isEnabled() && mc.player.networkHandler != null) {
+            mc.player.networkHandler.sendPacket(
+                new PlayerMoveC2SPacket.LookAndOnGround(yaw, pitch, mc.player.isOnGround())
+            );
+        } else {
+            mc.player.setYaw(yaw);
+            mc.player.setPitch(pitch);
+        }
+    }
+                    }
