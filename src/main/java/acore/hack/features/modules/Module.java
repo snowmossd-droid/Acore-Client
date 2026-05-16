@@ -2,6 +2,8 @@ package acore.hack.features.modules;
 
 import acore.hack.core.manager.ModuleManager;
 import net.minecraft.client.MinecraftClient;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Module {
     protected static MinecraftClient mc = MinecraftClient.getInstance();
@@ -13,6 +15,9 @@ public class Module {
     private int keyCode;
     private String keyPin = "";
     private boolean keyPinEnabled = false;
+    
+    // 👇 THÊM DÒNG NÀY - lưu danh sách settings
+    private final List<Object> settings = new ArrayList<>();
     
     public enum Category {
         COMBAT("Combat"),
@@ -45,6 +50,18 @@ public class Module {
     public void setKeyPin(String pin) { this.keyPin = pin; }
     public void setKeyPinEnabled(boolean enabled) { this.keyPinEnabled = enabled; }
     
+    // 👇 THÊM METHOD NÀY
+    protected void addSettings(Object... settingsList) {
+        for (Object setting : settingsList) {
+            settings.add(setting);
+        }
+    }
+    
+    // 👇 THÊM METHOD NÀY (lấy danh sách settings nếu cần)
+    public List<Object> getSettings() {
+        return settings;
+    }
+    
     public void enable() {
         enabled = true;
         onEnable();
@@ -64,7 +81,11 @@ public class Module {
     
     protected void onEnable() {}
     protected void onDisable() {}
+    
+    // 👇 THÊM METHOD NÀY (cho onTick)
+    public void onTick() {}
+    
     public void onUpdate() {}
     public void onRender() {}
     public void onRender3D() {}
-  }
+    }
