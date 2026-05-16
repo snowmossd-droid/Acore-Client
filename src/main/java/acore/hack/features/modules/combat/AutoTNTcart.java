@@ -39,9 +39,8 @@ public class AutoTNTcart extends Module {
     private List<BlockPos> railPositions = new ArrayList<>();
     private int railIndex   = 0;
     private int savedSlot   = -1;
-    private boolean isShooting = false;
 
-    // Track totem counts in offhand
+    // Track totem counts in offhand (chỉ để phát hiện enemy bể totem)
     private final Map<UUID, Integer> offhandTotemCount = new HashMap<>();
 
     public AutoTNTcart() {
@@ -57,7 +56,6 @@ public class AutoTNTcart extends Module {
         placeTimer = 0;
         shootTimer = 0;
         savedSlot = -1;
-        isShooting = false;
         offhandTotemCount.clear();
         
         if (mc.player != null) {
@@ -70,7 +68,6 @@ public class AutoTNTcart extends Module {
         restoreSlot();
         phase = 0;
         target = null;
-        isShooting = false;
         if (mc.player != null) {
             mc.options.useKey.setPressed(false);
         }
@@ -80,10 +77,9 @@ public class AutoTNTcart extends Module {
     public void onTick() {
         if (mc.player == null || mc.world == null) return;
 
-        // 1. Phát hiện enemy bể totem
+        // Chỉ phát hiện ENEMY bể totem, KHÔNG auto totem cho mình
         checkEnemyTotemPop();
 
-        // 2. Xử lý các phase
         placeTimer++;
         shootTimer++;
 
@@ -95,12 +91,13 @@ public class AutoTNTcart extends Module {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // PHÁT HIỆN ENEMY BỂ TOTEM (qua số lượng totem trong offhand giảm)
+    // Chỉ phát hiện ENEMY bể totem, BỎ QUA chính mình
     // ═══════════════════════════════════════════════════════════════
     private void checkEnemyTotemPop() {
         if (mc.world == null) return;
 
         for (PlayerEntity player : mc.world.getPlayers()) {
+            // BỎ QUA chính mình - không auto totem
             if (player == mc.player) continue;
 
             UUID uid = player.getUuid();
@@ -168,7 +165,6 @@ public class AutoTNTcart extends Module {
         if (placeTimer < placeDelay.getValue()) return;
         placeTimer = 0;
 
-        // Tìm đường ray trong inventory
         int railSlot = findRailSlot();
         if (railSlot == -1) {
             System.out.println("[AutoTNTcart] No rail found!");
@@ -176,10 +172,7 @@ public class AutoTNTcart extends Module {
             return;
         }
 
-        // Tự động đổi sang slot có rail
         swapToSlot(railSlot);
-        
-        // Tự động đặt rail
         BlockPos pos = railPositions.get(railIndex);
         placeBlock(pos);
         railIndex++;
@@ -214,15 +207,13 @@ public class AutoTNTcart extends Module {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // PHASE 3: TỰ ĐỘNG CẦM CUNG BẮN CART
+    // PHASE 3: TỰ ĐỘNG CẦM CUNG BẮN
     // ═══════════════════════════════════════════════════════════════
     private void doShoot() {
-        // Kiểm tra target còn sống không
         if (target == null || target.isDead() || !target.isAlive()) {
             restoreSlot();
             phase = 0;
             target = null;
-            isShooting = false;
             System.out.println("[AutoTNTcart] Target dead, stopping...");
             return;
         }
@@ -230,7 +221,6 @@ public class AutoTNTcart extends Module {
         if (shootTimer < shootDelay.getValue()) return;
         shootTimer = 0;
 
-        // Tìm cung hoặc nỏ
         int bowSlot = findBowSlot();
         if (bowSlot == -1) {
             System.out.println("[AutoTNTcart] No bow/crossbow found!");
@@ -240,13 +230,8 @@ public class AutoTNTcart extends Module {
             return;
         }
 
-        // Tự động đổi sang cung
         swapToSlot(bowSlot);
-        
-        // Tự động aim vào target
         aimAt(target);
-        
-        // Tự động bắn
         shootBow();
         
         System.out.println("[AutoTNTcart] Shot at target!");
@@ -258,11 +243,9 @@ public class AutoTNTcart extends Module {
         ItemStack held = mc.player.getInventory().getStack(mc.player.getInventory().selectedSlot);
         
         if (held.getItem() instanceof BowItem) {
-            // Bắn cung
             mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
             mc.player.swingHand(Hand.MAIN_HAND);
         } else if (held.getItem() instanceof CrossbowItem) {
-            // Bắn nỏ
             if (CrossbowItem.isCharged(held)) {
                 mc.interactionManager.interactItem(mc.player, Hand.MAIN_HAND);
             } else {
@@ -273,14 +256,13 @@ public class AutoTNTcart extends Module {
     }
 
     // ═══════════════════════════════════════════════════════════════
-    // TÌM VỊ TRÍ ĐẶT RAIL XUNG QUANH ENEMY (chỗ trống, có block dưới)
+    // TÌM VỊ TRÍ ĐẶT RAIL XUNG QUANH ENEMY
     // ═══════════════════════════════════════════════════════════════
     private List<BlockPos> findValidPositionsAround(PlayerEntity enemy, int maxCount) {
         List<BlockPos> positions = new ArrayList<>();
         BlockPos center = enemy.getBlockPos();
         int range = (int) placeRange.getValue();
 
-        // Duyệt tất cả vị trí xung quanh
         for (int x = -range; x <= range; x++) {
             for (int z = -range; z <= range; z++) {
                 for (int y = -1; y <= 1; y++) {
@@ -294,7 +276,6 @@ public class AutoTNTcart extends Module {
             }
         }
         
-        // Sắp xếp theo khoảng cách gần enemy nhất
         positions.sort(Comparator.comparingDouble(p -> p.getSquaredDistance(center)));
         return positions;
     }
@@ -303,13 +284,9 @@ public class AutoTNTcart extends Module {
         World world = mc.world;
         if (world == null) return false;
         
-        // Kiểm tra có block solid bên dưới
         boolean hasGround = world.getBlockState(pos.down()).isOpaque();
-        // Kiểm tra vị trí đặt trống
         boolean isEmpty = world.getBlockState(pos).isAir();
-        // Không đặt trùng chân enemy
         boolean notInsideEnemy = target == null || !pos.equals(target.getBlockPos());
-        // Không đặt quá xa
         boolean inRange = mc.player != null && pos.getSquaredDistance(mc.player.getBlockPos()) <= 36;
         
         return hasGround && isEmpty && notInsideEnemy && inRange;
@@ -408,4 +385,4 @@ public class AutoTNTcart extends Module {
             mc.player.setPitch(pitch);
         }
     }
-                    }
+        }
