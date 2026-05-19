@@ -85,7 +85,6 @@ public class TargetESP extends Module {
                   }
             }
          }
-
          if (!this.mode.is(TargetESP.Mode.GhostV2)) {
             this.renderer.reset();
          }
@@ -102,7 +101,6 @@ public class TargetESP extends Module {
       if (livingTarget != null) {
          this.ghostV1Target = livingTarget;
       }
-
       this.ghostV1Anim.setForward(livingTarget != null);
       if (this.ghostV1Target != null) {
          if (!this.ghostV1Target.isRemoved() && !this.ghostV1Anim.finished(false)) {
@@ -176,7 +174,6 @@ public class TargetESP extends Module {
                this.updateParticle(particle, index, fpsFactor, target, movementValue, animationFactor);
                particle.render(buffer, camera);
             }
-
             BufferRenderer.drawWithGlobalProgram(buffer.end());
             RenderSystem.depthMask(true);
             RenderSystem.enableDepthTest();
@@ -192,7 +189,6 @@ public class TargetESP extends Module {
          if (this.particles.size() < desired) {
             this.particles.add(new GhostRenderer3D(target.getPos(), Vec3d.ZERO, this.particleSize.get()));
          }
-
          while (this.particles.size() > desired) {
             this.particles.removeLast();
          }
@@ -235,4 +231,4 @@ public class TargetESP extends Module {
          this.targetEspAnim.reset();
       }
    }
-}
+   }
