@@ -26,7 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 import acore.hack.AcoreHack;
 import acore.hack.core.Managers;
-importimport acore.hack.core.manager.CommandManager;
+import acore.hack.core.manager.CommandManager;
 import acore.hack.core.manager.ModuleManager;
 import acore.hack.features.modules.misc.ClientSettings;
 import acore.hack.features.modules.misc.UnHook;
