@@ -1,4 +1,4 @@
-name: Build AcoreHack Mod
+name: Build Acore Mod
 
 on:
   push:
@@ -23,18 +23,18 @@ jobs:
         with:
           gradle-version: '8.8'
       
-      - name: Fix imports automatically
+      - name: Fix class names (ArisCore/AcoreHack -> Acore)
         run: |
-          echo "Fixing package imports (events -> event)..."
+          echo "Fixing class names to Acore..."
+          find src -name "*.java" -exec sed -i 's/ArisCore/Acore/g' {} \;
+          find src -name "*.java" -exec sed -i 's/AcoreHack/Acore/g' {} \;
+          echo "Done fixing class names!"
+      
+      - name: Fix event imports
+        run: |
+          echo "Fixing event imports..."
           find src -name "*.java" -exec sed -i 's/acore\.hack\.events\.impl/acore.hack.event.impl/g' {} \;
-          
-          echo "Adding missing PacketEvent imports..."
-          find src -name "*.java" -exec sed -i '/^package /a import acore.hack.event.impl.PacketEvent;' {} \;
-          
-          echo "Adding missing MethodHandles import to EventBus..."
-          find src -name "EventBus.java" -exec sed -i '/^package /a import java.lang.invoke.MethodHandles;' {} \;
-          
-          echo "Done fixing imports!"
+          echo "Done fixing event imports!"
       
       - name: Build Mod
         run: gradle build --no-daemon --stacktrace
@@ -42,5 +42,5 @@ jobs:
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
-          name: AcoreHack-1.21
+          name: Acore-1.21
           path: build/libs/*.jar
