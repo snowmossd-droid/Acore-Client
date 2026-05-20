@@ -6,7 +6,7 @@ import meteordevelopment.orbit.EventHandler;
 import acore.hack.AcoreHack;
 import acore.hack.events.impl.EventSetting;
 import acore.hack.features.modules.Module;
-import acore.hack.gui.clickui.ClickGUI;
+import acore.hack.features.gui.clickui.ClickGUI;
 import acore.hack.gui.font.FontRenderers;
 import acore.hack.setting.Setting;
 
