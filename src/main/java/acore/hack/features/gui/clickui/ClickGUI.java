@@ -52,7 +52,8 @@ public class ClickGUI extends Screen {
     
     private void setupWindows() {
         windows.clear();
-        Module.Category[] categories = Module.Category.values();
+        List<Module.Category> categoriesList = Module.Category.getCategories();
+        Module.Category[] categories = categoriesList.toArray(new Module.Category[0]);
         int panelWidth = 125;
         int panelHeight = 280;
         int panelMargin = 8;
@@ -63,7 +64,7 @@ public class ClickGUI extends Screen {
         for (int i = 0; i < categories.length; i++) {
             Category window = new Category(
                 categories[i],
-                ModuleManager.getModulesByCategory(categories[i]),
+                ModuleManager.getInstance().getModulesByCategory(categories[i]),
                 startX + i * (panelWidth + panelMargin),
                 startY,
                 panelWidth,
@@ -96,7 +97,8 @@ public class ClickGUI extends Screen {
         int panelWidth = 125;
         int panelHeight = 280;
         int panelMargin = 8;
-        Module.Category[] categories = Module.Category.values();
+        List<Module.Category> categoriesList = Module.Category.getCategories();
+        Module.Category[] categories = categoriesList.toArray(new Module.Category[0]);
         int totalWidth = categories.length * (panelWidth + panelMargin) - panelMargin;
         int startX = (mc.getWindow().getScaledWidth() - totalWidth) / 2;
         int startY = (mc.getWindow().getScaledHeight() - panelHeight) / 2;
@@ -153,8 +155,8 @@ public class ClickGUI extends Screen {
     private void renderDescription(DrawContext context) {
         if (descriptionActive && !currentDescription.isEmpty() && animProgress >= 0.99f) {
             float paddingX = 8f, paddingY = 4f;
-            float textWidth = textRenderer.getStringWidth(currentDescription);
-            float textHeight = textRenderer.fontHeight;
+            float textWidth = mc.textRenderer.getStringWidth(currentDescription);
+            float textHeight = mc.textRenderer.fontHeight;
             float descWidth = Math.max(60f, textWidth + paddingX * 2);
             float descHeight = textHeight + paddingY * 2;
             float descY = (mc.getWindow().getScaledHeight() - 280f) / 2f - descHeight - 10f;
@@ -163,7 +165,7 @@ public class ClickGUI extends Screen {
             
             Color bg = new Color(25, 25, 28, 200);
             drawRoundedRect(context, descX, descY, descWidth, descHeight, descHeight / 2f, bg);
-            context.drawCenteredTextWithShadow(textRenderer, currentDescription, (int)(descX + descWidth / 2), (int)textY, Color.WHITE.getRGB());
+            context.drawCenteredTextWithShadow(mc.textRenderer, currentDescription, (int)(descX + descWidth / 2), (int)textY, Color.WHITE.getRGB());
         }
     }
     
@@ -174,7 +176,7 @@ public class ClickGUI extends Screen {
             "Mid Click: Change bind",
             "Ctrl + F: Search modules"
         );
-        float lineHeight = textRenderer.fontHeight + 2f;
+        float lineHeight = mc.textRenderer.fontHeight + 2f;
         float startY = mc.getWindow().getScaledHeight() - 8f - lineHeight * hints.size();
         float startX = 8f;
         
@@ -186,11 +188,11 @@ public class ClickGUI extends Screen {
     private void drawOutlinedText(MatrixStack matrices, String text, float x, float y) {
         int outlineColor = new Color(0, 0, 0, 255).getRGB();
         int fillColor = Color.WHITE.getRGB();
-        textRenderer.drawWithShadow(matrices, text, x - 0.45f, y, outlineColor);
-        textRenderer.drawWithShadow(matrices, text, x + 0.45f, y, outlineColor);
-        textRenderer.drawWithShadow(matrices, text, x, y - 0.45f, outlineColor);
-        textRenderer.drawWithShadow(matrices, text, x, y + 0.45f, outlineColor);
-        textRenderer.drawWithShadow(matrices, text, x, y, fillColor);
+        mc.textRenderer.drawWithShadow(matrices, text, x - 0.45f, y, outlineColor);
+        mc.textRenderer.drawWithShadow(matrices, text, x + 0.45f, y, outlineColor);
+        mc.textRenderer.drawWithShadow(matrices, text, x, y - 0.45f, outlineColor);
+        mc.textRenderer.drawWithShadow(matrices, text, x, y + 0.45f, outlineColor);
+        mc.textRenderer.drawWithShadow(matrices, text, x, y, fillColor);
     }
     
     private void drawRoundedRect(DrawContext context, float x, float y, float w, float h, float r, Color color) {
@@ -257,4 +259,4 @@ public class ClickGUI extends Screen {
         currentDescription = description;
         descriptionActive = true;
     }
-  }
+    }
