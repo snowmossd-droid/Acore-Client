@@ -25,7 +25,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec2f;
 import org.jetbrains.annotations.NotNull;
-import acore.hack.ArisCore;
+import acore.hack.AcoreHack;
 import acore.hack.core.manager.MacroManager;
 import acore.hack.core.manager.ModuleManager;
 import acore.hack.events.impl.EventDeath;
