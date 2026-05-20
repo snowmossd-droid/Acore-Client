@@ -24,15 +24,16 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArisCore implements ClientModInitializer {
-    public static ArisCore INSTANCE;
+public class AcoreHack implements ClientModInitializer {
+    public static AcoreHack INSTANCE;
     public static final EventBus EVENT_BUS = new EventBus();
     public static final NotificationManager NOTIFICATION = new NotificationManager();
-    public static final Logger LOGGER = LoggerFactory.getLogger("ArisCore");
+    public static final Logger LOGGER = LoggerFactory.getLogger("AcoreHack");
     public static final List<Packet<?>> silentPackets = new ArrayList<>();
     public static float TICK_TIMER = 1.0F;
     public static Core core = new Core();
     public static BlockPos gps_position = null;
+    public static long initTime = System.currentTimeMillis();
 
     public static ClickGUI clickGUI;
     public static KeyBinding openGuiKey;
@@ -47,7 +48,7 @@ public class ArisCore implements ClientModInitializer {
     public void onInitializeClient() {
         INSTANCE = this;
 
-        LOGGER.info("[ArisCore] Initializing...");
+        LOGGER.info("[AcoreHack] Initializing...");
 
         EVENT_BUS.subscribe(core);
 
@@ -55,17 +56,17 @@ public class ArisCore implements ClientModInitializer {
         Managers.subscribe();
 
         openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.ariscore.openGui",
+            "key.acorehack.openGui",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_P,
-            "category.ariscore"
+            "category.acorehack"
         ));
 
         reloadConfigKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.ariscore.reloadConfig",
+            "key.acorehack.reloadConfig",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_PAGE_UP,
-            "category.ariscore"
+            "category.acorehack"
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -82,7 +83,7 @@ public class ArisCore implements ClientModInitializer {
             if (reloadConfigKey.wasPressed()) {
                 ConfigManager.getInstance().reloadConfig();
                 SoundManager.playClickSound();
-                LOGGER.info("[ArisCore] Config reloaded!");
+                LOGGER.info("[AcoreHack] Config reloaded!");
             }
 
             if (client.currentScreen == null) {
@@ -92,7 +93,7 @@ public class ArisCore implements ClientModInitializer {
             silentPackets.clear();
         });
 
-        LOGGER.info("[ArisCore] Initialized! Press P to open GUI");
-        LOGGER.info("[ArisCore] Config folder: .minecraft/ariscore/configs/");
+        LOGGER.info("[AcoreHack] Initialized! Press P to open GUI");
+        LOGGER.info("[AcoreHack] Config folder: .minecraft/acorehack/configs/");
     }
-}
+    }
