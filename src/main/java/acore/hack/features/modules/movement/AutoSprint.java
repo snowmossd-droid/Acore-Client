@@ -5,7 +5,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.util.math.BlockPos;
 import acore.hack.core.Managers;
-import acore.hack.core.manager.client.ModuleManager;
+import acore.hack.core.manager.ModuleManager;
 import acore.hack.features.modules.Module;
 import acore.hack.features.modules.combat.Aura;
 import acore.hack.setting.Setting;
