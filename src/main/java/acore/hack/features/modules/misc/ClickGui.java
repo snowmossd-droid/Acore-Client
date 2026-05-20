@@ -4,7 +4,7 @@ import java.awt.FontFormatException;
 import java.io.IOException;
 import meteordevelopment.orbit.EventHandler;
 import acore.hack.AcoreHack;
-import acore.hack.event.impl.EventSetting;
+import acore.hack.events.impl.EventSetting;
 import acore.hack.features.modules.Module;
 import acore.hack.features.gui.clickui.ClickGUI;
 import acore.hack.gui.font.FontRenderers;
@@ -68,4 +68,4 @@ public class ClickGui extends Module {
       } catch (Exception var3) {
       }
    }
-            }
+         }
