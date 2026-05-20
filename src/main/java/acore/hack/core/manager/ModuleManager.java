@@ -202,7 +202,7 @@ public class ModuleManager implements IManager {
       }
    }
 
-   public void saveModules() {
+   public static void saveModules() {
       if (ConfigManager.getInstance() != null) {
          if (ConfigManager.getInstance().getCurrentConfig() != null) {
             ConfigManager.getInstance().save(ConfigManager.getInstance().getCurrentConfig());
