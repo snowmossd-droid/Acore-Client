@@ -1,6 +1,6 @@
 package acore.hack.core;
 
-import acore.hack.ArisCore;
+import acore.hack.AcoreHack;
 import acore.hack.core.manager.AsyncManager;
 import acore.hack.core.manager.CommandManager;
 import acore.hack.core.manager.ConfigManager;
