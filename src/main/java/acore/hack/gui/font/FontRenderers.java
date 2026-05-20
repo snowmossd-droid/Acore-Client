@@ -5,7 +5,7 @@ import java.awt.FontFormatException;
 import java.io.IOException;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
-import acore.hack.ArisCore;
+import acore.hack.AcoreHack;
 
 public class FontRenderers {
    public static FontRenderer settings;
