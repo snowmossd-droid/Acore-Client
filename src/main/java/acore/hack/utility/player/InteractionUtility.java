@@ -33,7 +33,7 @@ import net.minecraft.world.RaycastContext.ShapeType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import acore.hack.features.modules.Module;
-import acore.hack.injection.accessors.IClientWorldMixin;
+import acore.hack.injection.accesors.IClientWorldMixin;
 import acore.hack.utility.world.ExplosionUtility;
 
 public final class InteractionUtility {
