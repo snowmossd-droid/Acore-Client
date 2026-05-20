@@ -33,7 +33,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import acore.hack.ArisCore;
+import acore.hack.AcoreHack;
 import acore.hack.core.Managers;
 import acore.hack.events.impl.EventMove;
 import acore.hack.events.impl.PacketEvent;
