@@ -106,7 +106,6 @@ public class ModuleManager implements IManager {
    public static PopChams popChams = new PopChams();
    public static NoRender noRender = new NoRender();
    public static ClickGui clickGui = new ClickGui();
-   public static ViewModel viewModel = new ViewModel();
    public static EMaceHelper eMaceHelper = new EMaceHelper();
    public static CrystalOptimizer crystalOptimizer = new CrystalOptimizer();
    public static ElytraSwap elytraSwap = new ElytraSwap();
