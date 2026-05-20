@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Scanner;
 import net.minecraft.client.MinecraftClient;
 import org.jetbrains.annotations.NotNull;
-import acore.hack.ArisCore;
+import acore.hack.AcoreHack;
 import acore.hack.core.Managers;
 import acore.hack.core.manager.IManager;
 import acore.hack.features.cmd.Command;
