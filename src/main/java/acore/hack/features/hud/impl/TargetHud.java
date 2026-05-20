@@ -13,7 +13,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import acore.hack.core.manager.client.ModuleManager;
+import acore.hack.core.manager.ModuleManager;
 import acore.hack.features.hud.HudElement;
 import acore.hack.features.modules.combat.Aura;
 import acore.hack.features.modules.misc.FixHP;
