@@ -30,7 +30,7 @@ import acore.hack.features.modules.combat.TriggerBot;
 import acore.hack.features.modules.combat.WallsBypass;
 import acore.hack.features.modules.combat.EMaceHelper;
 import acore.hack.features.modules.combat.CrystalOptimizer;
-import acore.hack.features.modules.combat.ElytraSwap;
+import acore.hack.features.modules.combat.MaceSwap;
 import acore.hack.features.modules.misc.ClientSettings;
 import acore.hack.features.modules.misc.ClientSound;
 import acore.hack.features.modules.misc.ClientSpoof;
