@@ -13,7 +13,7 @@ import net.minecraft.network.packet.s2c.play.EntityStatusS2CPacket;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import acore.hack.ArisCore;
+import acore.hack.AcoreHack;
 import acore.hack.core.Managers;
 import acore.hack.core.manager.IManager;
 import acore.hack.core.manager.ModuleManager;
