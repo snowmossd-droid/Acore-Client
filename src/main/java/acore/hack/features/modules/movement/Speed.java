@@ -36,7 +36,7 @@ import acore.hack.features.modules.Module;
 import acore.hack.injection.accesors.IInteractionManager;
 import acore.hack.setting.Setting;
 import acore.hack.utility.Timer;
-import acore.hack.injection.accessors.IEntity;
+import acore.hack.injection.accesors.IEntity;
 import acore.hack.utility.player.InventoryUtility;
 import acore.hack.utility.player.MovementUtility;
 import acore.hack.utility.player.SearchInvResult;
