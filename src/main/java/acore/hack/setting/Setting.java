@@ -86,7 +86,7 @@ public class Setting<T> {
 
    public void setValue(T value) {
       this.setValueSilent(value);
-      ArisCore.EVENT_BUS.post(new EventSetting(this));
+      AcoreHack.EVENT_BUS.post(new EventSetting(this));
    }
 
    public void setValueSilent(T value) {
@@ -155,13 +155,13 @@ public class Setting<T> {
    public void increaseEnum() {
       this.plannedValue = (T)EnumConverter.increaseEnum((Enum)this.value);
       this.value = this.plannedValue;
-      ArisCore.EVENT_BUS.post(new EventSetting(this));
+      AcoreHack.EVENT_BUS.post(new EventSetting(this));
    }
 
    public void setEnumByNumber(int id) {
       this.plannedValue = (T)EnumConverter.setEnumInt((Enum<?>)this.value, id);
       this.value = this.plannedValue;
-      ArisCore.EVENT_BUS.post(new EventSetting(this));
+      AcoreHack.EVENT_BUS.post(new EventSetting(this));
    }
 
    public boolean isNumberSetting() {
@@ -352,3 +352,4 @@ public class Setting<T> {
       return formatted.contains(".") ? formatted : formatted + ".0";
    }
         }
+        
