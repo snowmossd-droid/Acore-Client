@@ -4,6 +4,7 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import acore.hack.core.Managers;
 import acore.hack.core.manager.ModuleManager;
 import acore.hack.features.modules.Module;
@@ -155,7 +156,8 @@ public class AutoSprint extends Module {
          return 0;
       }
 
-      BlockPos belowPos = BlockPos.ofFloored(mc.player.getBoundingBox().add(0.0, -0.4, 0.0));
+      Box box = mc.player.getBoundingBox();
+      BlockPos belowPos = BlockPos.ofFloored(box.minX, box.minY - 0.4, box.minZ);
       return mc.world.getBlockState(belowPos).getBlock() == Blocks.WATER ? 0 : 5;
    }
 
@@ -182,4 +184,4 @@ public class AutoSprint extends Module {
    public void markAuraHitCooldown() {
       this.legitExtraHitCooldown.reset();
    }
-     }
+         }
