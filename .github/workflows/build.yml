@@ -1,4 +1,4 @@
-name: Build Acore Mod
+name: Build AcoreHack Mod
 
 on:
   push:
@@ -23,37 +23,23 @@ jobs:
         with:
           gradle-version: '8.8'
       
-      - name: Fix all imports and packages
+      - name: Fix all class names to AcoreHack
         run: |
-          echo "=== Fixing package names (vcore -> acore.hack) ==="
-          find src -name "*.java" -exec sed -i 's/^package vcore/package acore.hack/g' {} \;
+          echo "=== Fixing ArisCore -> AcoreHack ==="
+          find src -name "*.java" -exec sed -i 's/ArisCore/AcoreHack/g' {} \;
           
-          echo "=== Fixing imports (vcore -> acore.hack) ==="
-          find src -name "*.java" -exec sed -i 's/import vcore\./import acore.hack./g' {} \;
+          echo "=== Ensuring AcoreHack is consistent ==="
+          find src -name "*.java" -exec sed -i 's/Acore/AcoreHack/g' {} \;
           
-          echo "=== Fixing event package (events -> event) ==="
+          echo "=== Fixing event imports ==="
           find src -name "*.java" -exec sed -i 's/import acore.hack.events\.impl/import acore.hack.event.impl/g' {} \;
           
-          echo "=== Ensuring AcoreHack import works ==="
-          find src -name "*.java" -exec sed -i 's/import acore.hack.Acore;/import acore.hack.AcoreHack;/g' {} \;
-          find src -name "*.java" -exec sed -i 's/Acore\.INSTANCE/AcoreHack.INSTANCE/g' {} \;
-          find src -name "*.java" -exec sed -i 's/Acore\.initTime/AcoreHack.initTime/g' {} \;
-          
-          echo "=== Fixing main class name to AcoreHack ==="
-          find src -name "Acore.java" -exec sed -i 's/public class Acore/public class AcoreHack/g' {} \;
-          find src -name "Acore.java" -exec sed -i 's/public static Acore INSTANCE/public static AcoreHack INSTANCE/g' {} \;
+          echo "=== Fixing vcore to acore.hack ==="
+          find src -name "*.java" -exec sed -i 's/import vcore\./import acore.hack./g' {} \;
+          find src -name "*.java" -exec sed -i 's/^package vcore/package acore.hack/g' {} \;
           
           echo "=== Adding missing imports ==="
           find src -name "EventBus.java" -exec sed -i '/^package /a import java.lang.invoke.MethodHandles;' {} \;
-          
-          echo "=== Fixing Minecraft 1.21 method mappings ==="
-          find src -name "*.java" -exec sed -i 's/\.method_6128()/.isFallFlying()/g' {} \;
-          find src -name "*.java" -exec sed -i 's/\.method_31548()/.getInventory()/g' {} \;
-          find src -name "*.java" -exec sed -i 's/\.method_36454()/.getYaw()/g' {} \;
-          find src -name "*.java" -exec sed -i 's/\.method_36455()/.getPitch()/g' {} \;
-          find src -name "*.java" -exec sed -i 's/\.field_7512/.currentScreenHandler/g' {} \;
-          find src -name "*.java" -exec sed -i 's/\.method_6079()/.getOffHandStack()/g' {} \;
-          find src -name "*.java" -exec sed -i 's/\.method_7357()/.getItemCooldownManager()/g' {} \;
           
           echo "=== Done! ==="
       
@@ -61,6 +47,9 @@ jobs:
         run: |
           if [ -f "src/main/java/acore/hack/Acore.java" ]; then
             mv src/main/java/acore/hack/Acore.java src/main/java/acore/hack/AcoreHack.java
+          fi
+          if [ -f "src/main/java/acore/hack/ArisCore.java" ]; then
+            mv src/main/java/acore/hack/ArisCore.java src/main/java/acore/hack/AcoreHack.java
           fi
       
       - name: Build Mod
