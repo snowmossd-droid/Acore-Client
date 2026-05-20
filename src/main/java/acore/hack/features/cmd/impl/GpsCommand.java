@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.NotNull;
-import acore.hack.ArisCore;
+import acore.hack.AcoreHack;
 import acore.hack.features.cmd.Command;
 
 public class GpsCommand extends Command {
