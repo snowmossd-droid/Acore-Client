@@ -71,6 +71,7 @@ import acore.hack.features.modules.render.Particles;
 import acore.hack.features.modules.render.PopChams;
 import acore.hack.features.modules.render.StorageEsp;
 import acore.hack.features.modules.render.TargetESP;
+import acore.hack.features.modules.render.ViewModel;
 import acore.hack.features.gui.clickui.ClickGUI;
 
 public class ModuleManager implements IManager {
@@ -130,6 +131,7 @@ public class ModuleManager implements IManager {
    public static ESP esp = new ESP();
    public static Hat hat = new Hat();
    public static RPC rpc = new RPC();
+   public static ViewModel viewModel = new ViewModel();
    public static PearlChaser pearlChaser = new PearlChaser();
    public static ClientSound ClientSound = new ClientSound();
    public static TargetStrafe targetStrafe = new TargetStrafe();
