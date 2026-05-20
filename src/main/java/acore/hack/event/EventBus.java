@@ -1,7 +1,7 @@
 package acore.hack.event;
 
 import meteordevelopment.orbit.IEventBus;
-import meteordevelopment.orbit.EventBus;
+// import meteordevelopment.orbit.EventBus;
 import java.lang.invoke.MethodHandles;
 
 public class EventBus {
