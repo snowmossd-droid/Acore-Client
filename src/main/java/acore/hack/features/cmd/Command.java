@@ -14,7 +14,7 @@ import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
-import acore.hack.core.manager.CommandManager;
+// import acore.hack.core.manager.CommandManager;
 
 public abstract class Command {
    protected static final CommandRegistryAccess REGISTRY_ACCESS = CommandManager.createRegistryAccess(BuiltinRegistries.createWrapperLookup());
