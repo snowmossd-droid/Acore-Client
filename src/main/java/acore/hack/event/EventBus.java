@@ -1,9 +1,9 @@
 package acore.hack.event;
 
-import meteordevelopment.orbit.EventBus as OrbitEventBus;
+import meteordevelopment.orbit.EventBus;
 
 public class EventBus {
-    private static final OrbitEventBus EVENT_BUS = new OrbitEventBus();
+    private static final EventBus EVENT_BUS = new EventBus();
     
     static {
         EVENT_BUS.registerLambdaFactory("acore.hack.event.impl", (lookupInMethod, klass) -> 
