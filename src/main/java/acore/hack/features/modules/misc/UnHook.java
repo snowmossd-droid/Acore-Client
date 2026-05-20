@@ -47,7 +47,7 @@ public class UnHook extends Module {
       this.list = Managers.MODULE.getEnabledModules();
       mc.setScreen(null);
       this.refreshWindowTitle();
-      Managers.ASYNC.run(() -> mc.method_40000(() -> {
+      Managers.ASYNC.run(() -> mc.execute(() -> {
          for (Module module : this.list) {
             if (!module.equals(this)) {
                module.disable();
@@ -153,4 +153,4 @@ public class UnHook extends Module {
    private static boolean isAcoreModListEntry(String trimmedLowerLine) {
       return trimmedLowerLine.matches("^(?:[-+*|`\\\\]+\\s+)?acore\\b.*");
    }
-   }
+               }
