@@ -16,6 +16,16 @@ repositories {
         name = "Fabric"
         url = "https://maven.fabricmc.net/"
     }
+    // ⭐ THÊM REPOSITORY NÀY - rất quan trọng
+    maven {
+        name = "Mojang"
+        url = "https://libraries.minecraft.net"
+    }
+    // Thêm mirror dự phòng
+    maven {
+        name = "Maven Mirror"
+        url = "https://repo.maven.apache.org/maven2/"
+    }
 }
 
 dependencies {
