@@ -8,7 +8,7 @@ import java.util.Objects;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import org.lwjgl.glfw.GLFW;
-import acore.hack.ArisCore;
+import acore.hack.AcoreHack;
 import acore.hack.core.manager.IManager;
 import acore.hack.features.hud.HudElement;
 import acore.hack.features.modules.Module;
