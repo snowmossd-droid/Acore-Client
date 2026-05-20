@@ -1,6 +1,6 @@
 package acore.hack.core.hooks;
 
-import acore.hack.core.manager.client.ModuleManager;
+import acore.hack.core.manager.ModuleManager;
 import acore.hack.features.modules.misc.UnHook;
 
 public class ModuleShutdownHook extends Thread {
