@@ -5,10 +5,10 @@ import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.gl.Uniform;
 import net.minecraft.util.Identifier;
 
-public class ShaderProgram {
+public class VenShaderProgram {
    protected final ShaderProgram program;
 
-   public ShaderProgram(String vertex, String fragment) {
+   public VenShaderProgram(String vertex, String fragment) {
       this.program = new ShaderProgram(
          RenderSystem.getResourceFactory(), 
          Identifier.of("ariscore", "shaders/core/" + vertex + ".vsh"), 
@@ -58,4 +58,4 @@ public class ShaderProgram {
          uniform.set(v1, v2, v3, v4);
       }
    }
-}
+   }
