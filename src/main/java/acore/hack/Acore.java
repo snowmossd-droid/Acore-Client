@@ -24,11 +24,11 @@ import org.lwjgl.glfw.GLFW;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Acore implements ClientModInitializer {
-    public static Acore INSTANCE;
+public class AcoreHack implements ClientModInitializer {
+    public static AcoreHack INSTANCE;
     public static final EventBus EVENT_BUS = new EventBus();
     public static final NotificationManager NOTIFICATION = new NotificationManager();
-    public static final Logger LOGGER = LoggerFactory.getLogger("Acore");
+    public static final Logger LOGGER = LoggerFactory.getLogger("AcoreHack");
     public static final List<Packet<?>> silentPackets = new ArrayList<>();
     public static float TICK_TIMER = 1.0F;
     public static Core core = new Core();
@@ -48,7 +48,7 @@ public class Acore implements ClientModInitializer {
     public void onInitializeClient() {
         INSTANCE = this;
 
-        LOGGER.info("[Acore] Initializing...");
+        LOGGER.info("[AcoreHack] Initializing...");
 
         EVENT_BUS.subscribe(core);
 
@@ -56,17 +56,17 @@ public class Acore implements ClientModInitializer {
         Managers.subscribe();
 
         openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.acore.openGui",
+            "key.acorehack.openGui",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_P,
-            "category.acore"
+            "category.acorehack"
         ));
 
         reloadConfigKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.acore.reloadConfig",
+            "key.acorehack.reloadConfig",
             InputUtil.Type.KEYSYM,
             GLFW.GLFW_KEY_PAGE_UP,
-            "category.acore"
+            "category.acorehack"
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
@@ -83,7 +83,7 @@ public class Acore implements ClientModInitializer {
             if (reloadConfigKey.wasPressed()) {
                 ConfigManager.getInstance().reloadConfig();
                 SoundManager.playClickSound();
-                LOGGER.info("[Acore] Config reloaded!");
+                LOGGER.info("[AcoreHack] Config reloaded!");
             }
 
             if (client.currentScreen == null) {
@@ -93,7 +93,7 @@ public class Acore implements ClientModInitializer {
             silentPackets.clear();
         });
 
-        LOGGER.info("[Acore] Initialized! Press P to open GUI");
-        LOGGER.info("[Acore] Config folder: .minecraft/acore/configs/");
+        LOGGER.info("[AcoreHack] Initialized! Press P to open GUI");
+        LOGGER.info("[AcoreHack] Config folder: .minecraft/acorehack/configs/");
     }
-            }
+}
