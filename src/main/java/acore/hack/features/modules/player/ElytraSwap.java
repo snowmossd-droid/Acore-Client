@@ -11,7 +11,7 @@ import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Hand;
 import acore.hack.core.InputBlocker;
 import acore.hack.core.Managers;
-import acore.hack.core.manager.client.ModuleManager;
+import acore.hack.core.manager.ModuleManager;
 import acore.hack.event.impl.PacketEvent;
 import acore.hack.features.modules.Module;
 import acore.hack.features.modules.combat.Aura;
