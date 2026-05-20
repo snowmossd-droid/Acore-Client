@@ -35,7 +35,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import org.jetbrains.annotations.NotNull;
 import acore.hack.core.Managers;
-import acore.hack.core.manager.client.ModuleManager;
+import acore.hack.core.manager.ModuleManager;
 import acore.hack.event.impl.EventTick;
 import acore.hack.event.impl.PacketEvent;
 import acore.hack.features.modules.Module;
