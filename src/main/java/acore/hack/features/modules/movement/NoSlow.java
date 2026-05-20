@@ -2,6 +2,7 @@ package acore.hack.features.modules.movement;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.block.Blocks;
 import acore.hack.features.modules.Module;
 import acore.hack.setting.Setting;
 
@@ -39,10 +40,10 @@ public class NoSlow extends Module {
    }
 
    private boolean isInWeb() {
-      return mc.world.getBlockState(mc.player.getBlockPos()).isOf(Items.COBWEB);
+      return mc.world.getBlockState(mc.player.getBlockPos()).isOf(Blocks.COBWEB);
    }
 
    public boolean isSneaking() {
       return this.isEnabled() && this.sneak.getValue();
    }
-}
+               }
