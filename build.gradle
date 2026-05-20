@@ -24,6 +24,11 @@ repositories {
         name = "Maven Mirror"
         url = "https://repo.maven.apache.org/maven2/"
     }
+    // ⭐ THÊM JITPACK REPOSITORY - chứa Orbit library
+    maven {
+        name = "JitPack"
+        url = "https://jitpack.io"
+    }
 }
 
 dependencies {
@@ -32,8 +37,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     
-    // ⭐ THÊM DÒNG NÀY - Orbit event bus library
-    implementation 'meteordevelopment:orbit:0.2.3'
+    // ⭐ Orbit event bus - dùng đúng groupId của JitPack
+    implementation 'com.github.MeteorDevelopment:orbit:0.2.3'
 }
 
 processResources {
