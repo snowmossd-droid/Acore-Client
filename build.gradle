@@ -24,10 +24,20 @@ repositories {
         name = "Maven Mirror"
         url = "https://repo.maven.apache.org/maven2/"
     }
-    // ⭐ THÊM JITPACK REPOSITORY - chứa Orbit library
+    // JitPack - chứa Orbit library
     maven {
         name = "JitPack"
         url = "https://jitpack.io"
+    }
+    // ⭐ Ladysnake - chứa Satin library
+    maven {
+        name = "Ladysnake Mods"
+        url = "https://maven.ladysnake.org/releases"
+    }
+    // ⭐ Terraformers - chứa các thư viện bổ trợ khác
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/releases/"
     }
 }
 
@@ -37,8 +47,11 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     
-    // ⭐ Orbit event bus - dùng đúng groupId của JitPack
+    // Orbit event bus
     implementation 'com.github.MeteorDevelopment:orbit:0.2.3'
+    
+    // ⭐ Satin - thư viện shader (GIẢI QUYẾT LỖI ManagedCoreShader, Uniform1f, Uniform2f, v.v.)
+    modImplementation include("org.ladysnake:satin:${project.satin_version}")
 }
 
 processResources {
