@@ -23,34 +23,11 @@ jobs:
         with:
           gradle-version: '8.8'
       
-      - name: Fix all class names to AcoreHack
+      - name: Fix event imports
         run: |
-          echo "=== Fixing ArisCore -> AcoreHack ==="
-          find src -name "*.java" -exec sed -i 's/ArisCore/AcoreHack/g' {} \;
-          
-          echo "=== Ensuring AcoreHack is consistent ==="
-          find src -name "*.java" -exec sed -i 's/Acore/AcoreHack/g' {} \;
-          
-          echo "=== Fixing event imports ==="
-          find src -name "*.java" -exec sed -i 's/import acore.hack.events\.impl/import acore.hack.event.impl/g' {} \;
-          
-          echo "=== Fixing vcore to acore.hack ==="
-          find src -name "*.java" -exec sed -i 's/import vcore\./import acore.hack./g' {} \;
-          find src -name "*.java" -exec sed -i 's/^package vcore/package acore.hack/g' {} \;
-          
-          echo "=== Adding missing imports ==="
-          find src -name "EventBus.java" -exec sed -i '/^package /a import java.lang.invoke.MethodHandles;' {} \;
-          
-          echo "=== Done! ==="
-      
-      - name: Rename main class file
-        run: |
-          if [ -f "src/main/java/acore/hack/Acore.java" ]; then
-            mv src/main/java/acore/hack/Acore.java src/main/java/acore/hack/AcoreHack.java
-          fi
-          if [ -f "src/main/java/acore/hack/ArisCore.java" ]; then
-            mv src/main/java/acore/hack/ArisCore.java src/main/java/acore/hack/AcoreHack.java
-          fi
+          echo "Fixing event package (events -> event)..."
+          find src -name "*.java" -exec sed -i 's/import acore\.hack\.events\.impl/import acore.hack.event.impl/g' {} \;
+          echo "Done!"
       
       - name: Build Mod
         run: gradle build --no-daemon --stacktrace
