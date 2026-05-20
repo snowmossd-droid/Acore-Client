@@ -84,14 +84,14 @@ public abstract class Module {
 
    protected void sendPacket(Packet<?> packet) {
       if (mc.getNetworkHandler() != null) {
-         mc.getNetworkHandler().method_52787(packet);
+         mc.getNetworkHandler().sendPacket(packet);
       }
    }
 
    protected void sendPacketSilent(Packet<?> packet) {
       if (mc.getNetworkHandler() != null) {
          AcoreHack.core.silentPackets.add(packet);
-         mc.getNetworkHandler().method_52787(packet);
+         mc.getNetworkHandler().sendPacket(packet);
       }
    }
 
@@ -101,7 +101,7 @@ public abstract class Module {
 
          try {
             int i = pendingUpdateManager.getSequence();
-            mc.getNetworkHandler().method_52787(packetCreator.predict(i));
+            mc.getNetworkHandler().sendPacket(packetCreator.predict(i));
          } catch (Throwable var6) {
             if (pendingUpdateManager != null) {
                try {
@@ -288,56 +288,48 @@ public abstract class Module {
 
    public static void clickSlot(int id) {
       if (id != -1 && mc.interactionManager != null && mc.player != null) {
-         mc.interactionManager.clickSlot(mc.player.field_7512.syncId, id, 0, SlotActionType.PICKUP, mc.player);
+         mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, id, 0, SlotActionType.PICKUP, mc.player);
       }
    }
 
    public static void clickSlot(int id, SlotActionType type) {
       if (id != -1 && mc.interactionManager != null && mc.player != null) {
-         mc.interactionManager.clickSlot(mc.player.field_7512.syncId, id, 0, type, mc.player);
+         mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, id, 0, type, mc.player);
       }
    }
 
    public static void clickSlot(int id, int button, SlotActionType type) {
       if (id != -1 && mc.interactionManager != null && mc.player != null) {
-         mc.interactionManager.clickSlot(mc.player.field_7512.syncId, id, button, type, mc.player);
+         mc.interactionManager.clickSlot(mc.player.playerScreenHandler.syncId, id, button, type, mc.player);
       }
    }
 
    public void sendMessage(String message) {
       if (!fullNullCheck() && ClientSettings.clientMessages.getValue() && !ModuleManager.unHook.isEnabled()) {
-         if (mc.method_18854()) {
-            mc.player
-               .method_43496(
-                  Text.of(
-                     CommandManager.getClientMessage()
-                        + " "
-                        + Formatting.GRAY
-                        + "["
-                        + Formatting.DARK_PURPLE
-                        + this.getDisplayName()
-                        + Formatting.GRAY
-                        + "] "
-                        + message
-                  )
-               );
+         if (mc.isOnThread()) {
+            mc.player.sendMessage(Text.of(
+               CommandManager.getClientMessage()
+                  + " "
+                  + Formatting.GRAY
+                  + "["
+                  + Formatting.DARK_PURPLE
+                  + this.getDisplayName()
+                  + Formatting.GRAY
+                  + "] "
+                  + message
+            ), false);
          } else {
-            mc.method_40000(
-               () -> mc.player
-                  .method_43496(
-                     Text.of(
-                        CommandManager.getClientMessage()
-                           + " "
-                           + Formatting.GRAY
-                           + "["
-                           + Formatting.DARK_PURPLE
-                           + this.getDisplayName()
-                           + Formatting.GRAY
-                           + "] "
-                           + message
-                     )
-                  )
-            );
+            mc.execute(() -> mc.player.sendMessage(Text.of(
+               CommandManager.getClientMessage()
+                  + " "
+                  + Formatting.GRAY
+                  + "["
+                  + Formatting.DARK_PURPLE
+                  + this.getDisplayName()
+                  + Formatting.GRAY
+                  + "] "
+                  + message
+            ), false));
          }
       }
    }
@@ -356,38 +348,30 @@ public abstract class Module {
 
    public void debug(String message) {
       if (!fullNullCheck() && ClientSettings.debug.getValue()) {
-         if (mc.method_18854()) {
-            mc.player
-               .method_43496(
-                  Text.of(
-                     CommandManager.getClientMessage()
-                        + " "
-                        + Formatting.GRAY
-                        + "["
-                        + Formatting.DARK_PURPLE
-                        + this.getDisplayName()
-                        + Formatting.GRAY
-                        + "] [\ud83d\udd27] "
-                        + message
-                  )
-               );
+         if (mc.isOnThread()) {
+            mc.player.sendMessage(Text.of(
+               CommandManager.getClientMessage()
+                  + " "
+                  + Formatting.GRAY
+                  + "["
+                  + Formatting.DARK_PURPLE
+                  + this.getDisplayName()
+                  + Formatting.GRAY
+                  + "] [\uD83D\uDD27] "
+                  + message
+            ), false);
          } else {
-            mc.method_40000(
-               () -> mc.player
-                  .method_43496(
-                     Text.of(
-                        CommandManager.getClientMessage()
-                           + " "
-                           + Formatting.GRAY
-                           + "["
-                           + Formatting.DARK_PURPLE
-                           + this.getDisplayName()
-                           + Formatting.GRAY
-                           + "] [\ud83d\udd27] "
-                           + message
-                     )
-                  )
-            );
+            mc.execute(() -> mc.player.sendMessage(Text.of(
+               CommandManager.getClientMessage()
+                  + " "
+                  + Formatting.GRAY
+                  + "["
+                  + Formatting.DARK_PURPLE
+                  + this.getDisplayName()
+                  + Formatting.GRAY
+                  + "] [\uD83D\uDD27] "
+                  + message
+            ), false));
          }
       }
    }
@@ -486,4 +470,4 @@ public abstract class Module {
          CATEGORIES.put("Misc", MISC);
       }
    }
-}
+   }
