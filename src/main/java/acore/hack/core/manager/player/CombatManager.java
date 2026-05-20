@@ -42,7 +42,7 @@ public class CombatManager implements IManager {
             } else if (this.popList.get(ent.getName().getString()) != null) {
                this.popList.put(ent.getName().getString(), this.popList.get(ent.getName().getString()) + 1);
             }
-            ArisCore.EVENT_BUS.post(new TotemPopEvent((PlayerEntity)ent, this.popList.get(ent.getName().getString())));
+            AcoreHack.EVENT_BUS.post(new TotemPopEvent((PlayerEntity)ent, this.popList.get(ent.getName().getString())));
          }
       }
    }
