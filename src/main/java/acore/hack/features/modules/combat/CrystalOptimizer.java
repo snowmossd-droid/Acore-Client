@@ -19,7 +19,6 @@ import net.minecraft.network.packet.c2s.play.PlayerInteractEntityC2SPacket;
 import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket;
 import org.jetbrains.annotations.NotNull;
 import acore.hack.AcoreHack;
-import acore.hack.core.manager.Managers;
 import acore.hack.events.impl.PacketEvent;
 import acore.hack.features.modules.Module;
 import acore.hack.setting.Setting;
@@ -151,7 +150,7 @@ public final class CrystalOptimizer extends Module {
    }
 
    private long getBlatantTimeMs() {
-      return Math.max(MIN_BLATANT_TIME_MS, Managers.SERVER.getPing() * 2L);
+      return Math.max(MIN_BLATANT_TIME_MS, 150L);
    }
 
    private int getEntityId(@NotNull PlayerInteractEntityC2SPacket packet) {
@@ -183,4 +182,4 @@ public final class CrystalOptimizer extends Module {
          || stack.getItem() instanceof AxeItem
          || stack.getItem() instanceof ShovelItem;
    }
-  }
+   }
