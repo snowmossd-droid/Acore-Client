@@ -15,7 +15,7 @@ import acore.hack.features.cmd.Command;
 import acore.hack.features.cmd.args.ModuleArgumentType;
 import acore.hack.features.cmd.args.SettingArgumentType;
 import acore.hack.features.modules.Module;
-import acore.hack.features.modules.misc.ClickGuiModule;
+import acore.hack.features.modules.misc.ClickGui;
 import acore.hack.setting.Setting;
 import acore.hack.setting.impl.BooleanSettingGroup;
 import acore.hack.setting.impl.ColorSetting;
