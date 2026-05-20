@@ -32,7 +32,7 @@ import acore.hack.features.modules.combat.WallsBypass;
 import acore.hack.features.modules.misc.ClientSettings;
 import acore.hack.features.modules.misc.ClientSound;
 import acore.hack.features.modules.misc.ClientSpoof;
-import acore.hack.features.modules.misc.ClickGuiModule;
+import acore.hack.features.modules.misc.ClickGui;
 import acore.hack.features.modules.misc.FakePlayer;
 import acore.hack.features.modules.misc.FixHP;
 import acore.hack.features.modules.misc.NameProtect;
@@ -101,7 +101,7 @@ public class ModuleManager implements IManager {
    public static Velocity velocity = new Velocity();
    public static PopChams popChams = new PopChams();
    public static NoRender noRender = new NoRender();
-   public static ClickGuiModule clickGui = new ClickGuiModule();
+   public static ClickGui clickGui = new ClickGui();
    public static AutoTrap autoTrap = new AutoTrap();
    public static BlockESP blockESP = new BlockESP();
    public static MaceSwap maceSwap = new MaceSwap();
