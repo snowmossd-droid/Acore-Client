@@ -18,12 +18,14 @@ public class Velocity extends Module {
     public void onVelocity(EventFixVelocity event) {
         if (mc.player == null || mc.world == null) return;
         
+        double multiplier = strength.getValue() / 100.0;
+        
         if (horizontal.getValue()) {
-            event.setX(event.getX() * (strength.getValue() / 100.0));
-            event.setZ(event.getZ() * (strength.getValue() / 100.0));
+            event.x = event.x * multiplier;
+            event.z = event.z * multiplier;
         }
         if (vertical.getValue()) {
-            event.setY(event.getY() * (strength.getValue() / 100.0));
+            event.y = event.y * multiplier;
         }
     }
 }
