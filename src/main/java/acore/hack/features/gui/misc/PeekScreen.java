@@ -3,6 +3,7 @@ package acore.hack.features.gui.misc;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ShulkerBoxScreenHandler;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
 public class PeekScreen extends HandledScreen<ShulkerBoxScreenHandler> {
