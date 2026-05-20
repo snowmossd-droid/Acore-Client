@@ -37,10 +37,10 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     
-    // Orbit
-    implementation 'com.github.MeteorDevelopment:orbit:0.2.3'
+    // Orbit event bus
+    modImplementation 'com.github.MeteorDevelopment:orbit:0.2.3'
     
-    // ⭐ Satin - dùng modImplementation KHÔNG có 'include'
+    // Satin - BỎ 'include' nếu gây lỗi
     modImplementation "org.ladysnake:satin:${project.satin_version}"
 }
 
