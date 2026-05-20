@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
-import acore.hack.ArisCore;
+import acore.hack.AcoreHack;
 import acore.hack.events.impl.EventSetting;
 import acore.hack.features.modules.Module;
 import acore.hack.setting.impl.Bind;
