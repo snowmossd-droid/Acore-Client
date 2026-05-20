@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import net.minecraft.client.gui.DrawContext;
 import org.apache.commons.lang3.SystemUtils;
-import acore.hack.ArisCore;
+import acore.hack.AcoreHack;
 import acore.hack.core.manager.IManager;
 import acore.hack.features.modules.misc.Notifications;
 import acore.hack.gui.notification.Notification;
