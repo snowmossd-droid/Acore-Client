@@ -10,7 +10,6 @@ import net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket.Mode;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.util.Hand;
 import acore.hack.core.InputBlocker;
-import acore.hack.core.Managers;
 import acore.hack.core.manager.ModuleManager;
 import acore.hack.event.impl.PacketEvent;
 import acore.hack.features.modules.Module;
@@ -126,7 +125,6 @@ public class ElytraSwap extends Module {
          yaw = ModuleManager.aura.rotationYaw;
          pitch = ModuleManager.aura.rotationPitch;
       }
-
       return new float[]{yaw, pitch};
    }
 
@@ -146,13 +144,12 @@ public class ElytraSwap extends Module {
             return slot.slot();
          }
       }
-
       return -1;
    }
 
    private void swapChest() {
       if (this.swapDelayTicks <= 0 && mc.player != null) {
-         ElytraSwap.SwapRequest request = this.getSwapRequest();
+         SwapRequest request = this.getSwapRequest();
          if (request != null) {
             if (this.delay.getValue()) {
                if (this.pendingSwapSlot != request.slot || this.pendingStartFirework != request.startFirework) {
@@ -161,7 +158,6 @@ public class ElytraSwap extends Module {
                   this.pendingSwapAt = System.currentTimeMillis() + this.getSwapDelayMs();
                   return;
                }
-
                if (System.currentTimeMillis() < this.pendingSwapAt) {
                   return;
                }
@@ -172,7 +168,6 @@ public class ElytraSwap extends Module {
                   InputBlocker.block();
                } catch (Throwable var3) {
                }
-
                this.scheduledSwap = true;
                this.scheduledSwapSlot = request.slot;
                this.scheduledStartFirework = request.startFirework;
@@ -188,13 +183,11 @@ public class ElytraSwap extends Module {
       if (this.scheduledSwap) {
          if (System.currentTimeMillis() >= this.scheduledActionAt) {
             if (mc.player != null) {
-               this.executeSwap(new ElytraSwap.SwapRequest(this.scheduledSwapSlot, this.scheduledStartFirework));
-
+               this.executeSwap(new SwapRequest(this.scheduledSwapSlot, this.scheduledStartFirework));
                try {
                   InputBlocker.blockFor(10L);
                } catch (Throwable var2) {
                }
-
                this.scheduledSwap = false;
                this.scheduledSwapSlot = -1;
                this.scheduledStartFirework = false;
@@ -204,7 +197,7 @@ public class ElytraSwap extends Module {
       }
    }
 
-   private void executeSwap(ElytraSwap.SwapRequest request) {
+   private void executeSwap(SwapRequest request) {
       swapping = true;
       clickSlot(request.slot);
       clickSlot(6);
@@ -212,20 +205,19 @@ public class ElytraSwap extends Module {
       if (request.startFirework) {
          this.sendPacket(new ClientCommandC2SPacket(mc.player, Mode.START_FALL_FLYING));
       }
-
       swapping = false;
       this.resetPendingDelay();
       this.swapDelayTicks = this.getPostSwapDelayTicks();
    }
 
-   private ElytraSwap.SwapRequest getSwapRequest() {
+   private SwapRequest getSwapRequest() {
       if (mc.player.getInventory().getStack(38).getItem() == Items.ELYTRA) {
          int slot = getChestPlateSlot();
          if (slot == -1) {
             this.sendMessage("You don't have a chestplate!");
             return null;
          } else {
-            return new ElytraSwap.SwapRequest(slot, false);
+            return new SwapRequest(slot, false);
          }
       } else {
          SearchInvResult result = InventoryUtility.findItemInInventory(Items.ELYTRA);
@@ -234,13 +226,13 @@ public class ElytraSwap extends Module {
             return null;
          } else {
             boolean startFirework = this.startFireWork.getValue() && mc.player.fallDistance > 0.0F;
-            return new ElytraSwap.SwapRequest(result.slot(), startFirework);
+            return new SwapRequest(result.slot(), startFirework);
          }
       }
    }
 
    private int getPostSwapDelayTicks() {
-      return (int)(2.0F + Managers.SERVER.getPing() / 25.0F);
+      return (int)(2.0F + 50.0F);
    }
 
    private long getSwapDelayMs() {
@@ -253,6 +245,13 @@ public class ElytraSwap extends Module {
       this.pendingStartFirework = false;
    }
 
-   private record SwapRequest(int slot, boolean startFirework) {
+   private static class SwapRequest {
+      int slot;
+      boolean startFirework;
+      
+      SwapRequest(int slot, boolean startFirework) {
+         this.slot = slot;
+         this.startFirework = startFirework;
+      }
    }
-                                                           }
+   }
