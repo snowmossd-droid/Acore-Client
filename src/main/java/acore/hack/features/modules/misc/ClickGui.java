@@ -31,7 +31,7 @@ public class ClickGui extends Module {
    }
 
    public void setGui() {
-      mc.setScreen(ClickGUI.getClickGui());
+      mc.setScreen(new ClickGUI());
    }
 
    @Override
@@ -68,4 +68,4 @@ public class ClickGui extends Module {
       } catch (Exception var3) {
       }
    }
-         }
+}
