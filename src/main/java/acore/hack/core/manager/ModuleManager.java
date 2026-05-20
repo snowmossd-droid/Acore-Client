@@ -70,7 +70,7 @@ import acore.hack.features.modules.render.Particles;
 import acore.hack.features.modules.render.PopChams;
 import acore.hack.features.modules.render.StorageEsp;
 import acore.hack.features.modules.render.TargetESP;
-import acore.hack.gui.clickui.ClickGUI;
+import acore.hack.features.gui.clickui.ClickGUI;
 
 public class ModuleManager implements IManager {
    public ArrayList<Module> modules = new ArrayList<>();
