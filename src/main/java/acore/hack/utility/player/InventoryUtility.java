@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 import acore.hack.core.Managers;
 import acore.hack.core.manager.ModuleManager;
 import acore.hack.features.modules.Module;
-import acore.hack.injection.accessors.IInteractionManager;
+import acore.hack.injection.accesors.IInteractionManager;
 
 public final class InventoryUtility {
    private static int cachedSlot = -1;
