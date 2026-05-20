@@ -30,7 +30,7 @@ import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.Explosion.DestructionType;
 import org.apache.commons.lang3.mutable.MutableInt;
 import acore.hack.features.modules.Module;
-import acore.hack.injection.accessors.IExplosion;
+import acore.hack.injection.accesors.IExplosion;
 import acore.hack.utility.math.PredictUtility;
 
 public final class ExplosionUtility {
