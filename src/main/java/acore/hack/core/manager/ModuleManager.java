@@ -108,7 +108,6 @@ public class ModuleManager implements IManager {
    public static ClickGui clickGui = new ClickGui();
    public static EMaceHelper eMaceHelper = new EMaceHelper();
    public static CrystalOptimizer crystalOptimizer = new CrystalOptimizer();
-   public static ElytraSwap elytraSwap = new ElytraSwap();
    public static AutoTrap autoTrap = new AutoTrap();
    public static BlockESP blockESP = new BlockESP();
    public static MaceSwap maceSwap = new MaceSwap();
