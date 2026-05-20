@@ -70,7 +70,7 @@ public final class AutoWeb extends Module {
             switch ((AutoWeb.RenderMode)this.renderMode.getValue()) {
                case Fade:
                   Render3DEngine.drawFilledBox(stack, new Box(pos), Render2DEngine.injectAlpha(this.renderFillColor.getValue().getColorObject(), (int)(100.0F * (1.0F - (float)(System.currentTimeMillis() - time) / 500.0F))));
-                  Render3DEngine.drawBoxOutline(new Box(pos), Render2DEngine.injectAlpha(this.renderLineColor.getValue().getColorObject(), (int)(100.0F * (1.0F - (float)(System.currentTimeMillis() - time) / 500.0F)), this.renderLineWidth.getValue().intValue());
+                  Render3DEngine.drawBoxOutline(new Box(pos), Render2DEngine.injectAlpha(this.renderLineColor.getValue().getColorObject(), (int)(100.0F * (1.0F - (float)(System.currentTimeMillis() - time) / 500.0F)), this.renderLineWidth.getValue().intValue()));
                   break;
                case Decrease:
                   float scale = 1.0F - (float)(System.currentTimeMillis() - time) / 500.0F;
