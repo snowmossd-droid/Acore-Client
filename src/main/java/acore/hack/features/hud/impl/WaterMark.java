@@ -7,7 +7,7 @@ import java.awt.Color;
 import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.client.gui.DrawContext;
-import acore.hack.core.manager.client.ModuleManager;
+import acore.hack.core.manager.ModuleManager;
 import acore.hack.features.hud.HudElement;
 import acore.hack.features.modules.misc.NameProtect;
 import acore.hack.features.modules.render.HudEditor;
