@@ -109,7 +109,8 @@ public class Speed extends Module {
       if (this.mode.getValue() == Speed.Mode.GrimEntity && !e.isPre()) {
          for (PlayerEntity ent : Managers.ASYNC.getAsyncPlayers()) {
             if (ent != mc.player && mc.player.distanceTo(ent) <= 2.25) {
-               float p = mc.world.getBlockState(((IEntity)mc.player).getVelocityBP()).getBlock().getSlipperiness();
+               BlockPos pos = BlockPos.ofFloored(mc.player.getX(), mc.player.getY() - 0.5, mc.player.getZ());
+               float p = mc.world.getBlockState(pos).getBlock().getSlipperiness();
                float f = mc.player.isOnGround() ? p * 0.91F : 0.91F;
                float f2 = mc.player.isOnGround() ? p : 0.99F;
                mc.player.setVelocity(mc.player.getVelocity().x / f * f2, mc.player.getVelocity().y, mc.player.getVelocity().z / f * f2);
@@ -133,7 +134,7 @@ public class Speed extends Module {
    @EventHandler
    public void onTick(EventTick e) {
       if ((this.mode.is(Speed.Mode.GrimIce) || this.mode.is(Speed.Mode.GrimCombo)) && mc.player.isOnGround()) {
-         BlockPos pos = ((IEntity)mc.player).getVelocityBP();
+         BlockPos pos = BlockPos.ofFloored(mc.player.getX(), mc.player.getY() - 0.5, mc.player.getZ());
          SearchInvResult result = InventoryUtility.findBlockInHotBar(Blocks.ICE, Blocks.PACKED_ICE, Blocks.BLUE_ICE);
          if (mc.world.isAir(pos) || !result.found() || !mc.options.jumpKey.isPressed()) {
             return;
@@ -179,7 +180,7 @@ public class Speed extends Module {
                   mc.interactionManager.clickSlot(0, ellySlot, 1, SlotActionType.PICKUP, mc.player);
                   mc.interactionManager.clickSlot(0, 6, 1, SlotActionType.PICKUP, mc.player);
                }
-               mc.player.networkHandler.sendPacket(new ClientCommandC2SPacket(mc.player, net.minecraft.network.packet.c2s.play.ClientCommandC2SPacket.Mode.START_FALL_FLYING));
+               mc.player.networkHandler.sendPacket(new ClientCommandC2SPacket(mc.player, ClientCommandC2SPacket.Mode.START_FALL_FLYING));
                int prevSlot = mc.player.getInventory().selectedSlot;
                if (prevSlot != fireSlot && !inOffHand) {
                   this.sendPacket(new UpdateSelectedSlotC2SPacket(fireSlot));
@@ -305,4 +306,4 @@ public class Speed extends Module {
       StrictStrafe,
       Vanilla;
    }
-}
+   }
