@@ -18,23 +18,50 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
       
-      - name: Setup Gradle 8.8
+      - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: '8.8'
       
-      - name: Fix class names (ArisCore/AcoreHack -> Acore)
+      - name: Fix all imports and packages
         run: |
-          echo "Fixing class names to Acore..."
-          find src -name "*.java" -exec sed -i 's/ArisCore/Acore/g' {} \;
-          find src -name "*.java" -exec sed -i 's/AcoreHack/Acore/g' {} \;
-          echo "Done fixing class names!"
+          echo "=== Fixing package names (vcore -> acore.hack) ==="
+          find src -name "*.java" -exec sed -i 's/^package vcore/package acore.hack/g' {} \;
+          
+          echo "=== Fixing imports (vcore -> acore.hack) ==="
+          find src -name "*.java" -exec sed -i 's/import vcore\./import acore.hack./g' {} \;
+          
+          echo "=== Fixing event package (events -> event) ==="
+          find src -name "*.java" -exec sed -i 's/import acore.hack.events\.impl/import acore.hack.event.impl/g' {} \;
+          
+          echo "=== Ensuring AcoreHack import works ==="
+          find src -name "*.java" -exec sed -i 's/import acore.hack.Acore;/import acore.hack.AcoreHack;/g' {} \;
+          find src -name "*.java" -exec sed -i 's/Acore\.INSTANCE/AcoreHack.INSTANCE/g' {} \;
+          find src -name "*.java" -exec sed -i 's/Acore\.initTime/AcoreHack.initTime/g' {} \;
+          
+          echo "=== Fixing main class name to AcoreHack ==="
+          find src -name "Acore.java" -exec sed -i 's/public class Acore/public class AcoreHack/g' {} \;
+          find src -name "Acore.java" -exec sed -i 's/public static Acore INSTANCE/public static AcoreHack INSTANCE/g' {} \;
+          
+          echo "=== Adding missing imports ==="
+          find src -name "EventBus.java" -exec sed -i '/^package /a import java.lang.invoke.MethodHandles;' {} \;
+          
+          echo "=== Fixing Minecraft 1.21 method mappings ==="
+          find src -name "*.java" -exec sed -i 's/\.method_6128()/.isFallFlying()/g' {} \;
+          find src -name "*.java" -exec sed -i 's/\.method_31548()/.getInventory()/g' {} \;
+          find src -name "*.java" -exec sed -i 's/\.method_36454()/.getYaw()/g' {} \;
+          find src -name "*.java" -exec sed -i 's/\.method_36455()/.getPitch()/g' {} \;
+          find src -name "*.java" -exec sed -i 's/\.field_7512/.currentScreenHandler/g' {} \;
+          find src -name "*.java" -exec sed -i 's/\.method_6079()/.getOffHandStack()/g' {} \;
+          find src -name "*.java" -exec sed -i 's/\.method_7357()/.getItemCooldownManager()/g' {} \;
+          
+          echo "=== Done! ==="
       
-      - name: Fix event imports
+      - name: Rename main class file
         run: |
-          echo "Fixing event imports..."
-          find src -name "*.java" -exec sed -i 's/acore\.hack\.events\.impl/acore.hack.event.impl/g' {} \;
-          echo "Done fixing event imports!"
+          if [ -f "src/main/java/acore/hack/Acore.java" ]; then
+            mv src/main/java/acore/hack/Acore.java src/main/java/acore/hack/AcoreHack.java
+          fi
       
       - name: Build Mod
         run: gradle build --no-daemon --stacktrace
@@ -42,5 +69,5 @@ jobs:
       - name: Upload JAR
         uses: actions/upload-artifact@v4
         with:
-          name: Acore-1.21
+          name: AcoreHack-1.21
           path: build/libs/*.jar
