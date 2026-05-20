@@ -15,7 +15,7 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import acore.hack.ArisCore;
+import acore.hack.AcoreHack;
 import acore.hack.core.manager.ConfigManager;
 import acore.hack.features.modules.Module;
 import acore.hack.utility.math.MathUtility;
