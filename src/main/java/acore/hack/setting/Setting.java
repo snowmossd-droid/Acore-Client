@@ -311,15 +311,15 @@ public class Setting<T> {
          value = BigDecimal.valueOf(value).setScale(getStepScale(this.step), RoundingMode.HALF_UP).doubleValue();
       }
       if (numberValue instanceof Integer) {
-         return (T)(int)Math.round(value);
+         return (T) Integer.valueOf((int)Math.round(value));
       } else if (numberValue instanceof Float) {
-         return (T)(float)value;
+         return (T) Float.valueOf((float)value);
       } else if (numberValue instanceof Long) {
-         return (T)Math.round(value);
+         return (T) Long.valueOf(Math.round(value));
       } else if (numberValue instanceof Short) {
-         return (T)(short)Math.round(value);
+         return (T) Short.valueOf((short)Math.round(value));
       } else {
-         return (T)(numberValue instanceof Byte ? (byte)Math.round(value) : value);
+         return (T) (numberValue instanceof Byte ? Byte.valueOf((byte)Math.round(value)) : Double.valueOf(value));
       }
    }
 
@@ -351,5 +351,4 @@ public class Setting<T> {
       String formatted = BigDecimal.valueOf(value).setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
       return formatted.contains(".") ? formatted : formatted + ".0";
    }
-        }
-        
+}
