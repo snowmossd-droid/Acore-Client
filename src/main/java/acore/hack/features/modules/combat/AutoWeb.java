@@ -67,15 +67,17 @@ public final class AutoWeb extends Module {
          if (System.currentTimeMillis() - time > this.effectDurationMs.getValue().intValue()) {
             this.renderPoses.remove(pos);
          } else {
+            float progress = 1.0F - (float)(System.currentTimeMillis() - time) / this.effectDurationMs.getValue().floatValue();
+            int alpha = (int)(100.0F * progress);
             switch ((AutoWeb.RenderMode)this.renderMode.getValue()) {
                case Fade:
-                  Render3DEngine.drawFilledBox(stack, new Box(pos), Render2DEngine.injectAlpha(this.renderFillColor.getValue().getColorObject(), (int)(100.0F * (1.0F - (float)(System.currentTimeMillis() - time) / 500.0F))));
-                  Render3DEngine.drawBoxOutline(new Box(pos), Render2DEngine.injectAlpha(this.renderLineColor.getValue().getColorObject(), (int)(100.0F * (1.0F - (float)(System.currentTimeMillis() - time) / 500.0F)), this.renderLineWidth.getValue().intValue()));
+                  Render3DEngine.drawFilledBox(stack, new Box(pos), Render2DEngine.injectAlpha(this.renderFillColor.getValue().getColorObject(), alpha));
+                  Render3DEngine.drawBoxOutline(new Box(pos), Render2DEngine.injectAlpha(this.renderLineColor.getValue().getColorObject(), alpha), this.renderLineWidth.getValue().intValue());
                   break;
                case Decrease:
                   float scale = 1.0F - (float)(System.currentTimeMillis() - time) / 500.0F;
                   Box box = new Box(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
-                  Render3DEngine.drawFilledBox(stack, box.shrink(scale, scale, scale).offset(0.5 + scale * 0.5, 0.5 + scale * 0.5, 0.5 + scale * 0.5), Render2DEngine.injectAlpha(this.renderFillColor.getValue().getColorObject(), (int)(100.0F * (1.0F - (float)(System.currentTimeMillis() - time) / 500.0F))));
+                  Render3DEngine.drawFilledBox(stack, box.shrink(scale, scale, scale).offset(0.5 + scale * 0.5, 0.5 + scale * 0.5, 0.5 + scale * 0.5), Render2DEngine.injectAlpha(this.renderFillColor.getValue().getColorObject(), alpha));
                   Render3DEngine.drawBoxOutline(box.shrink(scale, scale, scale).offset(0.5 + scale * 0.5, 0.5 + scale * 0.5, 0.5 + scale * 0.5), this.renderLineColor.getValue().getColorObject(), this.renderLineWidth.getValue().intValue());
             }
          }
@@ -193,4 +195,4 @@ public final class AutoWeb extends Module {
       Fade,
       Decrease;
    }
-}
+   }
