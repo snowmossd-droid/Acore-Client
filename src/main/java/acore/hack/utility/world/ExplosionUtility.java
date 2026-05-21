@@ -11,6 +11,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult.Type;
@@ -74,7 +75,8 @@ public final class ExplosionUtility {
                } else if (Module.mc.world.getDifficulty() == Difficulty.HARD) {
                   toDamage = toDamage * 3.0F / 2.0F;
                }
-               toDamage = DamageUtil.getDamageLeft(target, toDamage, ((IExplosion)explosion).getDamageSource(), target.getArmor(), (float)target.getAttributeValue(EntityAttributes.ARMOR_TOUGHNESS));
+               double armorToughness = target.getAttributeValue(EntityAttributes.ARMOR_TOUGHNESS);
+               toDamage = DamageUtil.getDamageLeft(target, toDamage, ((IExplosion)explosion).getDamageSource(), target.getArmor(), (float)armorToughness);
                if (target.hasStatusEffect(StatusEffects.RESISTANCE)) {
                   int resistance = 25 - (target.getStatusEffect(StatusEffects.RESISTANCE).getAmplifier() + 1) * 5;
                   float resistance_1 = toDamage * resistance;
@@ -127,7 +129,8 @@ public final class ExplosionUtility {
                } else if (Module.mc.world.getDifficulty() == Difficulty.HARD) {
                   toDamage = toDamage * 3.0F / 2.0F;
                }
-               toDamage = DamageUtil.getDamageLeft(target, toDamage, ((IExplosion)explosion).getDamageSource(), target.getArmor(), (float)target.getAttributeValue(EntityAttributes.ARMOR_TOUGHNESS));
+               double armorToughness = target.getAttributeValue(EntityAttributes.ARMOR_TOUGHNESS);
+               toDamage = DamageUtil.getDamageLeft(target, toDamage, ((IExplosion)explosion).getDamageSource(), target.getArmor(), (float)armorToughness);
                if (target.hasStatusEffect(StatusEffects.RESISTANCE)) {
                   int resistance = 25 - (target.getStatusEffect(StatusEffects.RESISTANCE).getAmplifier() + 1) * 5;
                   float resistance_1 = toDamage * resistance;
@@ -237,8 +240,15 @@ public final class ExplosionUtility {
    }
 
    public static int getProtectionAmount(ItemStack stack) {
-      int modifierBlast = EnchantmentHelper.getLevel(Enchantments.BLAST_PROTECTION, stack);
-      int modifier = EnchantmentHelper.getLevel(Enchantments.PROTECTION, stack);
+      if (Module.mc.world == null) return 0;
+      RegistryEntry<Enchantment> blastProtection = Module.mc.world.getRegistryManager()
+          .get(RegistryKeys.ENCHANTMENT)
+          .entryOf(Enchantments.BLAST_PROTECTION);
+      RegistryEntry<Enchantment> protection = Module.mc.world.getRegistryManager()
+          .get(RegistryKeys.ENCHANTMENT)
+          .entryOf(Enchantments.PROTECTION);
+      int modifierBlast = EnchantmentHelper.getLevel(blastProtection, stack);
+      int modifier = EnchantmentHelper.getLevel(protection, stack);
       return modifierBlast * 2 + modifier;
    }
-   }
+}
