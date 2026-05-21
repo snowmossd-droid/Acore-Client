@@ -111,7 +111,7 @@ public class NotificationManager implements IManager {
       } else if (SystemUtils.IS_OS_MAC) {
          this.mac(message);
       } else {
-         ArisCore.LOGGER.error("Unsupported OS: {}", SystemUtils.OS_NAME);
+         AcoreHack.LOGGER.error("Unsupported OS: {}", SystemUtils.OS_NAME);
       }
    }
 
@@ -121,37 +121,37 @@ public class NotificationManager implements IManager {
             if (this.trayIcon == null) {
                SystemTray tray = SystemTray.getSystemTray();
                Image image = Toolkit.getDefaultToolkit().createImage("resources/icon.png");
-               this.trayIcon = new TrayIcon(image, "ArisCore");
+               this.trayIcon = new TrayIcon(image, "AcoreHack");
                this.trayIcon.setImageAutoSize(true);
-               this.trayIcon.setToolTip("ArisCore");
+               this.trayIcon.setToolTip("AcoreHack");
                tray.add(this.trayIcon);
             }
             this.trayIcon.displayMessage(title, message, MessageType.INFO);
          } catch (Exception e) {
-            ArisCore.LOGGER.error(e.getMessage());
+            AcoreHack.LOGGER.error(e.getMessage());
          }
       } else {
-         ArisCore.LOGGER.error("SystemTray is not supported");
+         AcoreHack.LOGGER.error("SystemTray is not supported");
       }
    }
 
    private void mac(String message) {
       ProcessBuilder processBuilder = new ProcessBuilder();
-      processBuilder.command("osascript", "-e", "display notification \"" + message + "\" with title \"ArisCore\"");
+      processBuilder.command("osascript", "-e", "display notification \"" + message + "\" with title \"AcoreHack\"");
       try {
          processBuilder.start();
       } catch (IOException e) {
-         ArisCore.LOGGER.error(e.getMessage());
+         AcoreHack.LOGGER.error(e.getMessage());
       }
    }
 
    private void linux(String message) {
       ProcessBuilder processBuilder = new ProcessBuilder();
-      processBuilder.command("notify-send", "-a", "ArisCore", message);
+      processBuilder.command("notify-send", "-a", "AcoreHack", message);
       try {
          processBuilder.start();
       } catch (IOException e) {
-         ArisCore.LOGGER.error(e.getMessage());
+         AcoreHack.LOGGER.error(e.getMessage());
       }
    }
-}
+                     }
