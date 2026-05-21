@@ -148,18 +148,22 @@ public final class Criticals extends Module {
             if ((mc.player.isOnGround() || mc.player.getAbilities().flying || this.mode.is(Criticals.Mode.Grim))
                && !mc.player.isClimbing()
                && !mc.player.isSubmergedInWater()) {
-               switch ((Criticals.Mode)this.mode.getValue()) {
+               Criticals.Mode currentMode = (Criticals.Mode)this.mode.getValue();
+               switch (currentMode) {
                   case Grim:
                      if (!mc.player.isOnGround()) {
                         this.critPacket(-1.0E-6, true);
                      }
+                     break;
                   case AirStuck:
                   case Blink:
-                  default:
                      break;
                   case UpdatedNCP:
                      this.critPacket(2.71875E-7, false);
                      this.critPacket(0.0, false);
+                     break;
+                  default:
+                     break;
                }
             }
          }
@@ -191,14 +195,14 @@ public final class Criticals extends Module {
          return mc.world.getEntityById(entityId);
       } catch (Exception e) {
          PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
-         Method write = PlayerInteractEntityC2SPacket.class.getDeclaredMethod("write", PacketByteBuf.class);
-         write.setAccessible(true);
          try {
+            Method write = PlayerInteractEntityC2SPacket.class.getDeclaredMethod("write", PacketByteBuf.class);
+            write.setAccessible(true);
             write.invoke(packet, packetBuf);
+            return mc.world.getEntityById(packetBuf.readVarInt());
          } catch (Exception ex) {
             return null;
          }
-         return mc.world.getEntityById(packetBuf.readVarInt());
       }
    }
 
@@ -217,15 +221,15 @@ public final class Criticals extends Module {
          }
       } catch (Exception e) {
          PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
-         Method write = PlayerInteractEntityC2SPacket.class.getDeclaredMethod("write", PacketByteBuf.class);
-         write.setAccessible(true);
          try {
+            Method write = PlayerInteractEntityC2SPacket.class.getDeclaredMethod("write", PacketByteBuf.class);
+            write.setAccessible(true);
             write.invoke(packet, packetBuf);
+            packetBuf.readVarInt();
+            return packetBuf.readEnumConstant(Criticals.InteractType.class);
          } catch (Exception ex) {
             return Criticals.InteractType.INTERACT;
          }
-         packetBuf.readVarInt();
-         return packetBuf.readEnumConstant(Criticals.InteractType.class);
       }
    }
 
@@ -535,4 +539,4 @@ public final class Criticals extends Module {
 
    private record QueuedPacket(Packet<?> packet, long timestamp) {
    }
-           }
+      }
