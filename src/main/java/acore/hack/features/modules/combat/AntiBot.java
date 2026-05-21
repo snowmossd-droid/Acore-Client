@@ -150,7 +150,7 @@ public final class AntiBot extends Module {
                   }
 
                   try {
-                     if (visualArmor && (!invArmor || ent.getXpToLevelUp() == 0)) {
+                     if (visualArmor && (!invArmor || ent.experienceLevel == 0)) {
                         this.addBot(ent);
                      }
                   } catch (Exception ignored) {
@@ -212,4 +212,4 @@ public final class AntiBot extends Module {
    public enum Mode {
       Matrix;
    }
-}
+   }
