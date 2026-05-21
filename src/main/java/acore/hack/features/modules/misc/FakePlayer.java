@@ -14,6 +14,7 @@ import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.util.math.Vec3d;
 import acore.hack.AcoreHack;
 import acore.hack.core.Managers;
@@ -44,8 +45,8 @@ public class FakePlayer extends Module {
          fakePlayer = new OtherClientPlayerEntity(mc.world, new GameProfile(UUID.fromString("66123666-6666-6666-6666-666666666600"), this.name.getValue()));
          this.copyPlayerState();
          if (this.copyInventory.getValue()) {
-            fakePlayer.equipStack(Hand.MAIN_HAND, mc.player.getMainHandStack().copy());
-            fakePlayer.equipStack(Hand.OFF_HAND, mc.player.getOffHandStack().copy());
+            fakePlayer.equipStack(EquipmentSlot.MAINHAND, mc.player.getMainHandStack().copy());
+            fakePlayer.equipStack(EquipmentSlot.OFFHAND, mc.player.getOffHandStack().copy());
             fakePlayer.getInventory().setStack(36, mc.player.getInventory().getStack(36).copy());
             fakePlayer.getInventory().setStack(37, mc.player.getInventory().getStack(37).copy());
             fakePlayer.getInventory().setStack(38, mc.player.getInventory().getStack(38).copy());
@@ -88,7 +89,7 @@ public class FakePlayer extends Module {
    public void onSync(EventSync e) {
       if (fakePlayer != null) {
          if (this.autoTotem.getValue() && fakePlayer.getOffHandStack().getItem() != Items.TOTEM_OF_UNDYING) {
-            fakePlayer.equipStack(Hand.OFF_HAND, new ItemStack(Items.TOTEM_OF_UNDYING));
+            fakePlayer.equipStack(EquipmentSlot.OFFHAND, new ItemStack(Items.TOTEM_OF_UNDYING));
          }
          if (fakePlayer.isDead()) {
             this.deathTime++;
@@ -142,4 +143,4 @@ public class FakePlayer extends Module {
          this.deathTime = 0;
       }
    }
-}
+   }
