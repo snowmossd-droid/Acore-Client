@@ -61,8 +61,8 @@ public final class ExplosionUtility {
          if (!new Box(MathHelper.floor(explosionPos.x - 11.0), MathHelper.floor(explosionPos.y - 11.0), MathHelper.floor(explosionPos.z - 11.0), MathHelper.floor(explosionPos.x + 13.0), MathHelper.floor(explosionPos.y + 13.0), MathHelper.floor(explosionPos.z + 13.0)).intersects(target.getBoundingBox())) {
             return 0.0F;
          }
-         if (!target.isImmuneToExplosion() && !target.isInvulnerable()) {
-            double distExposure = (float)target.distanceTo(explosionPos) / 144.0;
+         if (!target.isImmuneToExplosion(explosion) && !target.isInvulnerable()) {
+            double distExposure = target.squaredDistanceTo(explosionPos) / 144.0;
             if (distExposure <= 1.0) {
                terrainIgnore = false;
                double exposure = getExposure(explosionPos, target.getBoundingBox(), optimized);
@@ -114,7 +114,7 @@ public final class ExplosionUtility {
          if (!new Box(MathHelper.floor(explosionPos.x - 11.0), MathHelper.floor(explosionPos.y - 11.0), MathHelper.floor(explosionPos.z - 11.0), MathHelper.floor(explosionPos.x + 13.0), MathHelper.floor(explosionPos.y + 13.0), MathHelper.floor(explosionPos.z + 13.0)).intersects(predict)) {
             return 0.0F;
          }
-         if (!target.isImmuneToExplosion() && !target.isInvulnerable()) {
+         if (!target.isImmuneToExplosion(explosion) && !target.isInvulnerable()) {
             double distExposure = predict.getCenter().add(0.0, -0.9, 0.0).squaredDistanceTo(explosionPos) / 144.0;
             if (distExposure <= 1.0) {
                terrainIgnore = false;
@@ -127,9 +127,9 @@ public final class ExplosionUtility {
                } else if (Module.mc.world.getDifficulty() == Difficulty.HARD) {
                   toDamage = toDamage * 3.0F / 2.0F;
                }
-               toDamage = DamageUtil.getDamageLeft(target, toDamage, ((IExplosion)explosion).getDamageSource(), target.getArmor(), (float)Objects.requireNonNull(target.getAttributeValue(EntityAttributes.ARMOR_TOUGHNESS)));
+               toDamage = DamageUtil.getDamageLeft(target, toDamage, ((IExplosion)explosion).getDamageSource(), target.getArmor(), (float)target.getAttributeValue(EntityAttributes.ARMOR_TOUGHNESS));
                if (target.hasStatusEffect(StatusEffects.RESISTANCE)) {
-                  int resistance = 25 - (Objects.requireNonNull(target.getStatusEffect(StatusEffects.RESISTANCE)).getAmplifier() + 1) * 5;
+                  int resistance = 25 - (target.getStatusEffect(StatusEffects.RESISTANCE).getAmplifier() + 1) * 5;
                   float resistance_1 = toDamage * resistance;
                   toDamage = Math.max(resistance_1 / 25.0F, 0.0F);
                }
@@ -237,8 +237,8 @@ public final class ExplosionUtility {
    }
 
    public static int getProtectionAmount(ItemStack stack) {
-      int modifierBlast = EnchantmentHelper.getLevel(Module.mc.world.getRegistryManager().get(Enchantments.BLAST_PROTECTION).getEntry(Enchantments.BLAST_PROTECTION).get(), stack);
-      int modifier = EnchantmentHelper.getLevel(Module.mc.world.getRegistryManager().get(Enchantments.PROTECTION).getEntry(Enchantments.PROTECTION).get(), stack);
+      int modifierBlast = EnchantmentHelper.getLevel(Enchantments.BLAST_PROTECTION, stack);
+      int modifier = EnchantmentHelper.getLevel(Enchantments.PROTECTION, stack);
       return modifierBlast * 2 + modifier;
    }
-                                      }
+   }
