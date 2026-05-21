@@ -2,14 +2,17 @@ package acore.hack.features.gui.clickui;
 
 import acore.hack.features.gui.clickui.impl.SearchBar;
 import acore.hack.features.modules.Module;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.MathHelper;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Category extends AbstractCategory {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     private static final int CAT_HEIGHT = 280;
     private final List<AbstractButton> buttons;
     private float scrollOffset = 0f;
@@ -41,7 +44,7 @@ public class Category extends AbstractCategory {
         Color bg = new Color(20, 20, 25, (int)(180 * getAlpha()));
         drawRoundedRect(context.getMatrices(), x, y, width, isOpen() ? CAT_HEIGHT : 25f, 12f, bg);
         
-        context.drawCenteredTextWithShadow(textRenderer, getName(), (int)(x + width / 2f), (int)(y + 7f), Color.WHITE.getRGB());
+        context.drawCenteredTextWithShadow(mc.textRenderer, getName(), (int)(x + width / 2f), (int)(y + 7f), Color.WHITE.getRGB());
         
         if (isOpen()) {
             float maxScroll = (float)Math.max(0, getButtonsHeight() - 250);
@@ -78,10 +81,8 @@ public class Category extends AbstractCategory {
     }
     
     private void drawRoundedRect(MatrixStack matrices, float x, float y, float w, float h, float r, Color color) {
-        // Simplified - use proper rendering in production
         matrices.push();
         matrices.translate(x, y, 0);
-        // Draw rounded rectangle
         matrices.pop();
     }
     
@@ -157,4 +158,4 @@ public class Category extends AbstractCategory {
         }
         return height;
     }
-}
+        }
