@@ -175,7 +175,7 @@ public class StorageEsp extends Module {
 
          if (this.tracers.getValue()) {
             double x1 = mc.player.prevX + (mc.player.getX() - mc.player.prevX) * Render3DEngine.getTickDelta();
-            double y1 = mc.player.getEyeY(mc.player.getPose())
+            double y1 = mc.player.getEyeY()
                + mc.player.prevY
                + (mc.player.getY() - mc.player.prevY) * Render3DEngine.getTickDelta();
             double z1 = mc.player.prevZ + (mc.player.getZ() - mc.player.prevZ) * Render3DEngine.getTickDelta();
@@ -286,4 +286,4 @@ public class StorageEsp extends Module {
 
       return chunks;
    }
-  }
+   }
