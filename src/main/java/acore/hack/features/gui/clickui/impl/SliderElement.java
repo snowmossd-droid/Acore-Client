@@ -2,12 +2,14 @@ package acore.hack.features.gui.clickui.impl;
 
 import acore.hack.features.gui.clickui.AbstractElement;
 import acore.hack.setting.Setting;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.math.MathHelper;
 
 import java.awt.Color;
 
 public class SliderElement extends AbstractElement {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     private final float min;
     private final float max;
     private float animation = 0f;
@@ -26,12 +28,12 @@ public class SliderElement extends AbstractElement {
         float current = ((Number)setting.getValue()).floatValue();
         animation += ((current - min) / (max - min) - animation) * 0.1f;
         
-        context.drawTextWithShadow(textRenderer, setting.getName(),
+        context.drawTextWithShadow(mc.textRenderer, setting.getName(),
             (int)getSettingNameX(), (int)(y + 4f), Color.WHITE.getRGB());
         
         String valueStr = setting.getDisplayValue();
-        context.drawTextWithShadow(textRenderer, valueStr,
-            (int)(x + width - 6f - textRenderer.getStringWidth(valueStr)), (int)(y + 4f), Color.WHITE.getRGB());
+        context.drawTextWithShadow(mc.textRenderer, valueStr,
+            (int)(x + width - 6f - mc.textRenderer.getWidth(valueStr)), (int)(y + 4f), Color.WHITE.getRGB());
         
         float trackX = x + 6f;
         float trackY = y + height - 6f;
@@ -86,4 +88,4 @@ public class SliderElement extends AbstractElement {
     private boolean isHovered(int mx, int my) {
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
-}
+            }
