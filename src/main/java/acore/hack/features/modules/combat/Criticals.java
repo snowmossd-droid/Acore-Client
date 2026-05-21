@@ -2,6 +2,7 @@ package acore.hack.features.modules.combat;
 
 import io.netty.buffer.Unpooled;
 import java.awt.Color;
+import java.lang.reflect.Method;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -183,16 +184,49 @@ public final class Criticals extends Module {
    }
 
    public static Entity getEntity(@NotNull PlayerInteractEntityC2SPacket packet) {
-      PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
-      packet.write(packetBuf);
-      return mc.world.getEntityById(packetBuf.readVarInt());
+      try {
+         Method getEntityId = PlayerInteractEntityC2SPacket.class.getDeclaredMethod("getEntityId");
+         getEntityId.setAccessible(true);
+         int entityId = (int) getEntityId.invoke(packet);
+         return mc.world.getEntityById(entityId);
+      } catch (Exception e) {
+         PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
+         Method write = PlayerInteractEntityC2SPacket.class.getDeclaredMethod("write", PacketByteBuf.class);
+         write.setAccessible(true);
+         try {
+            write.invoke(packet, packetBuf);
+         } catch (Exception ex) {
+            return null;
+         }
+         return mc.world.getEntityById(packetBuf.readVarInt());
+      }
    }
 
    public static Criticals.InteractType getInteractType(@NotNull PlayerInteractEntityC2SPacket packet) {
-      PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
-      packet.write(packetBuf);
-      packetBuf.readVarInt();
-      return packetBuf.readEnumConstant(Criticals.InteractType.class);
+      try {
+         Method getType = PlayerInteractEntityC2SPacket.class.getDeclaredMethod("getType");
+         getType.setAccessible(true);
+         Object type = getType.invoke(packet);
+         String typeName = type.toString();
+         if (typeName.contains("ATTACK")) {
+            return Criticals.InteractType.ATTACK;
+         } else if (typeName.contains("INTERACT")) {
+            return Criticals.InteractType.INTERACT;
+         } else {
+            return Criticals.InteractType.INTERACT_AT;
+         }
+      } catch (Exception e) {
+         PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
+         Method write = PlayerInteractEntityC2SPacket.class.getDeclaredMethod("write", PacketByteBuf.class);
+         write.setAccessible(true);
+         try {
+            write.invoke(packet, packetBuf);
+         } catch (Exception ex) {
+            return Criticals.InteractType.INTERACT;
+         }
+         packetBuf.readVarInt();
+         return packetBuf.readEnumConstant(Criticals.InteractType.class);
+      }
    }
 
    private boolean shouldAirStuck() {
@@ -501,4 +535,4 @@ public final class Criticals extends Module {
 
    private record QueuedPacket(Packet<?> packet, long timestamp) {
    }
-  }
+           }
