@@ -5,7 +5,6 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Hand;
 import acore.hack.core.InputBlocker;
 import acore.hack.features.modules.Module;
-import acore.hack.injection.accesors.IMinecraftClient;
 import acore.hack.setting.Setting;
 
 public class BowSpam extends Module {
@@ -116,7 +115,36 @@ public class BowSpam extends Module {
       }
 
       ItemStack bowStack = mc.player.getStackInHand(hand);
-      return this.isBow(bowStack) && (mc.player.getAbilities().creativeMode || !mc.player.getArrowType(bowStack).isEmpty());
+      if (!this.isBow(bowStack)) {
+         return false;
+      }
+      
+      if (mc.player.getAbilities().creativeMode) {
+         return true;
+      }
+      
+      return hasArrowInInventory();
+   }
+   
+   private boolean hasArrowInInventory() {
+      if (mc.player == null) return false;
+      
+      for (ItemStack stack : mc.player.getInventory().main) {
+         if (stack.getItem() == Items.ARROW || 
+             stack.getItem() == Items.SPECTRAL_ARROW ||
+             stack.getItem() == Items.TIPPED_ARROW) {
+            return true;
+         }
+      }
+      
+      ItemStack offHand = mc.player.getOffHandStack();
+      if (offHand.getItem() == Items.ARROW || 
+          offHand.getItem() == Items.SPECTRAL_ARROW ||
+          offHand.getItem() == Items.TIPPED_ARROW) {
+         return true;
+      }
+      
+      return false;
    }
 
    private boolean isBow(ItemStack stack) {
@@ -124,9 +152,7 @@ public class BowSpam extends Module {
    }
 
    private void startUsingBow(Hand hand) {
-      if (mc.currentScreen != null) {
-         ((IMinecraftClient)mc).doItemUse();
-      } else {
+      if (mc.currentScreen == null) {
          mc.options.useKey.setPressed(true);
          this.useKeyHeld = true;
       }
@@ -158,4 +184,4 @@ public class BowSpam extends Module {
          this.useKeyHeld = false;
       }
    }
-  }
+            }
