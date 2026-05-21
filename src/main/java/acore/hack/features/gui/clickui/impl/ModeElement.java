@@ -2,6 +2,7 @@ package acore.hack.features.gui.clickui.impl;
 
 import acore.hack.features.gui.clickui.AbstractElement;
 import acore.hack.setting.Setting;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.RotationAxis;
@@ -9,6 +10,7 @@ import net.minecraft.util.math.RotationAxis;
 import java.awt.Color;
 
 public class ModeElement extends AbstractElement {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     private boolean open = false;
     private float animation = 0f;
     private String prevMode;
@@ -33,12 +35,12 @@ public class ModeElement extends AbstractElement {
         matrices.translate(-tx, -ty, 0);
         matrices.pop();
         
-        context.drawTextWithShadow(textRenderer, setting.getName(),
+        context.drawTextWithShadow(mc.textRenderer, setting.getName(),
             (int)getSettingNameX(), (int)(y + height / 2f - 3f), Color.WHITE.getRGB());
         
         String value = setting.currentEnumName();
-        context.drawTextWithShadow(textRenderer, value,
-            (int)(x + width - 18f - textRenderer.getStringWidth(value)), (int)(y + height / 2f - 3f), Color.WHITE.getRGB());
+        context.drawTextWithShadow(mc.textRenderer, value,
+            (int)(x + width - 18f - mc.textRenderer.getStringWidth(value)), (int)(y + height / 2f - 3f), Color.WHITE.getRGB());
         
         if (open) {
             float startX = x + 6f;
@@ -46,14 +48,14 @@ public class ModeElement extends AbstractElement {
             String[] modes = setting.getModes();
             
             for (int i = 0; i < modes.length; i++) {
-                float chipWidth = textRenderer.getStringWidth(modes[i]) + 8f;
+                float chipWidth = mc.textRenderer.getStringWidth(modes[i]) + 8f;
                 float chipX = startX;
                 float chipY = startY + i * 14f;
                 
                 context.fill((int)chipX, (int)chipY, (int)(chipX + chipWidth), (int)(chipY + 12f), 
                     new Color(40, 40, 50).getRGB());
                 
-                context.drawTextWithShadow(textRenderer, modes[i],
+                context.drawTextWithShadow(mc.textRenderer, modes[i],
                     (int)(chipX + 4f), (int)(chipY + 2f),
                     setting.currentEnumName().equals(modes[i]) ? Color.CYAN.getRGB() : Color.WHITE.getRGB());
             }
@@ -76,7 +78,7 @@ public class ModeElement extends AbstractElement {
             String[] modes = setting.getModes();
             
             for (int i = 0; i < modes.length; i++) {
-                float chipWidth = textRenderer.getStringWidth(modes[i]) + 8f;
+                float chipWidth = mc.textRenderer.getStringWidth(modes[i]) + 8f;
                 if (mouseX >= startX && mouseX <= startX + chipWidth &&
                     mouseY >= startY + i * 14f && mouseY <= startY + i * 14f + 12f) {
                     setting.setEnumByNumber(i);
@@ -96,4 +98,4 @@ public class ModeElement extends AbstractElement {
     private boolean isHovered(int mx, int my) {
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
-}
+                                   }
