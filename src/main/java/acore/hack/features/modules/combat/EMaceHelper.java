@@ -94,7 +94,7 @@ public class EMaceHelper extends Module {
       if (target instanceof LivingEntity livingTarget) {
          if (livingTarget.isFallFlying()) {
             return true;
-         } else if (target instanceof PlayerEntity player && player.getXpToLevelUp() == 0) {
+         } else if (target instanceof PlayerEntity player && player.experienceLevel == 0) {
             return true;
          } else {
             return livingTarget.isSwimming() && this.isEyeInWater(livingTarget) ? true : this.isTargetBlockedBySolidBlock(target);
@@ -427,4 +427,4 @@ public class EMaceHelper extends Module {
       auraPostAttackTriggered = true;
       peakAssistPostAttackTriggered = true;
    }
-}
+      }
