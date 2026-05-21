@@ -25,7 +25,7 @@ public class BindElement extends AbstractElement {
             (int)getSettingNameX(), (int)(y + height / 2f - 3f), Color.WHITE.getRGB());
         
         String bindText = getBindText();
-        float tWidth = mc.textRenderer.getStringWidth(bindText);
+        float tWidth = mc.textRenderer.getWidth(bindText);
         
         context.fill((int)(x + width - tWidth - 11f), (int)(y + 2f),
             (int)(x + width - 7f), (int)(y + 12f), new Color(30, 30, 40).getRGB());
@@ -69,4 +69,4 @@ public class BindElement extends AbstractElement {
     private boolean isHovered(int mx, int my) {
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
-    }
+                       }
