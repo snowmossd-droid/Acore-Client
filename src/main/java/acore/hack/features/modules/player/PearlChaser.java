@@ -55,7 +55,7 @@ public class PearlChaser extends Module {
    @EventHandler
    public void onEntitySpawn(EventEntitySpawn e) {
       if (e.getEntity() instanceof EnderPearlEntity) {
-         mc.world.getPlayers().stream().min(Comparator.comparingDouble(p -> p.distanceTo(e.getEntity().getPos()))).ifPresent(player -> {
+         mc.world.getPlayers().stream().min(Comparator.comparingDouble(p -> p.squaredDistanceTo(e.getEntity().getPos()))).ifPresent(player -> {
             if (player.equals(mc.player)) {
                this.lastOurPearlId = e.getEntity().getId();
             }
@@ -73,7 +73,7 @@ public class PearlChaser extends Module {
          if (this.delayTimer.passedMs(1000L)) {
             for (Entity ent : mc.world.getEntities()) {
                if (ent instanceof EnderPearlEntity && ent.getId() != this.lastPearlId && ent.getId() != this.lastOurPearlId) {
-                  mc.world.getPlayers().stream().filter(e -> this.targets.containsKey(e) || !this.onlyTarget.getValue()).min(Comparator.comparingDouble(p -> p.distanceTo(ent.getPos()))).ifPresent(player -> {
+                  mc.world.getPlayers().stream().filter(e -> this.targets.containsKey(e) || !this.onlyTarget.getValue()).min(Comparator.comparingDouble(p -> p.squaredDistanceTo(ent.getPos()))).ifPresent(player -> {
                      if (!player.equals(mc.player)) {
                         this.targetBlock = this.calcTrajectory(ent);
                         this.lastPearlId = ent.getId();
@@ -83,7 +83,7 @@ public class PearlChaser extends Module {
             }
 
             if (this.targetBlock != null) {
-               if (!(mc.player.distanceTo(this.targetBlock.toCenterPos()) < 49.0)) {
+               if (!(mc.player.squaredDistanceTo(this.targetBlock.toCenterPos()) < 2401.0)) {
                   float rotationPitch = (float)(-Math.toDegrees(this.calcTrajectory(this.targetBlock)));
                   float rotationYaw = (float)Math.toDegrees(Math.atan2(this.targetBlock.getZ() + 0.5F - mc.player.getZ(), this.targetBlock.getX() + 0.5F - mc.player.getX())) - 90.0F;
                   BlockPos tracedBP = this.checkTrajectory(rotationYaw, rotationPitch);
@@ -223,4 +223,4 @@ public class PearlChaser extends Module {
       }
       return null;
    }
-}
+            }
