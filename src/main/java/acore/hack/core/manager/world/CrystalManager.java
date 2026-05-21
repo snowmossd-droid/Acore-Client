@@ -85,7 +85,7 @@ public class CrystalManager implements IManager {
          this.time = time;
          this.pos = pos;
          this.attempts = attempts;
-         this.distance = (float)IManager.mc.player.distanceTo(pos);
+         this.distance = (float)IManager.mc.player.squaredDistanceTo(pos);
       }
 
       public Vec3d getPos() {
@@ -101,7 +101,7 @@ public class CrystalManager implements IManager {
       }
 
       public boolean shouldRemove() {
-         return Math.abs(this.distance - IManager.mc.player.distanceTo(this.pos)) >= 1.0;
+         return Math.abs(this.distance - IManager.mc.player.squaredDistanceTo(this.pos)) >= 1.0;
       }
 
       public void addAttempt() {
@@ -112,4 +112,4 @@ public class CrystalManager implements IManager {
          return this.attempts >= Math.max(1.0F, Managers.SERVER.getPing() / 25.0F);
       }
    }
-                   }
+                                    }
