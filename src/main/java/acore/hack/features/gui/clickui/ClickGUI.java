@@ -52,7 +52,7 @@ public class ClickGUI extends Screen {
     
     private void setupWindows() {
         windows.clear();
-        Module.Category[] categories = Module.Category.values();
+        Module.Category[] categories = Module.Category.getValuesArray();
         int panelWidth = 125;
         int panelHeight = 280;
         int panelMargin = 8;
@@ -96,7 +96,7 @@ public class ClickGUI extends Screen {
         int panelWidth = 125;
         int panelHeight = 280;
         int panelMargin = 8;
-        Module.Category[] categories = Module.Category.values();
+        Module.Category[] categories = Module.Category.getValuesArray();
         int totalWidth = categories.length * (panelWidth + panelMargin) - panelMargin;
         int startX = (mc.getWindow().getScaledWidth() - totalWidth) / 2;
         int startY = (mc.getWindow().getScaledHeight() - panelHeight) / 2;
@@ -257,4 +257,4 @@ public class ClickGUI extends Screen {
         currentDescription = description;
         descriptionActive = true;
     }
-    }
+        }
