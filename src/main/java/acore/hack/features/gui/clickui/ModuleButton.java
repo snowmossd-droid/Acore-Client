@@ -4,15 +4,18 @@ import acore.hack.features.gui.clickui.impl.*;
 import acore.hack.features.modules.Module;
 import acore.hack.setting.Setting;
 import acore.hack.setting.impl.*;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Formatting;
+import org.lwjgl.glfw.GLFW;
 
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ModuleButton extends AbstractButton {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     public final Module module;
     private boolean open;
     private boolean hovered;
@@ -62,7 +65,7 @@ public class ModuleButton extends AbstractButton {
             ClickGUI.requestDescription(module.getDescription());
         }
         
-        float textY = y + (height - textRenderer.fontHeight) / 2f + 3f;
+        float textY = y + (height - mc.textRenderer.fontHeight) / 2f + 3f;
         
         Color bgColor = module.isEnabled() 
             ? new Color(70, 70, 200, (int)(80 * animation))
@@ -72,21 +75,21 @@ public class ModuleButton extends AbstractButton {
         if (!binding) {
             String bindText = getBindText();
             if (!bindText.equals("None")) {
-                context.drawTextWithShadow(textRenderer, bindText, 
-                    (int)(x + width - 11f - textRenderer.getStringWidth(bindText)), 
+                context.drawTextWithShadow(mc.textRenderer, bindText, 
+                    (int)(x + width - 11f - mc.textRenderer.getStringWidth(bindText)), 
                     (int)textY, module.isEnabled() ? Color.CYAN.getRGB() : Color.GRAY.getRGB());
             }
         } else {
             String bindMsg = holdbind ? Formatting.GRAY + "Hold" : "Toggle";
-            context.drawTextWithShadow(textRenderer, bindMsg,
-                (int)(x + width - 11f - textRenderer.getStringWidth(bindMsg)),
+            context.drawTextWithShadow(mc.textRenderer, bindMsg,
+                (int)(x + width - 11f - mc.textRenderer.getStringWidth(bindMsg)),
                 (int)textY, Color.WHITE.getRGB());
-            context.drawTextWithShadow(textRenderer, "Press key...",
+            context.drawTextWithShadow(mc.textRenderer, "Press key...",
                 (int)(x + 6f), (int)textY, Color.WHITE.getRGB());
         }
         
         if (!binding) {
-            context.drawTextWithShadow(textRenderer, module.getName(),
+            context.drawTextWithShadow(mc.textRenderer, module.getName(),
                 (int)(x + 6f), (int)textY, module.isEnabled() ? Color.CYAN.getRGB() : Color.WHITE.getRGB());
         }
         
@@ -129,7 +132,9 @@ public class ModuleButton extends AbstractButton {
     }
     
     private void drawRoundedRect(MatrixStack matrices, float x, float y, float w, float h, float r, Color color) {
-        // Simplified - use proper rendering
+        matrices.push();
+        matrices.translate(x, y, 0);
+        matrices.pop();
     }
     
     private boolean isHovered(int mx, int my, float x, float y, float w, float h) {
@@ -208,7 +213,7 @@ public class ModuleButton extends AbstractButton {
     
     @Override
     public void tick() {
-        elements.forEach(AbstractElement::getSetting); // refresh visibility
+        elements.forEach(AbstractElement::getSetting);
     }
     
     public boolean isOpen() { return open; }
@@ -222,4 +227,4 @@ public class ModuleButton extends AbstractButton {
         }
         return target;
     }
-}
+                        }
