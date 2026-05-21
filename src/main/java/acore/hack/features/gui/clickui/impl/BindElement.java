@@ -3,11 +3,14 @@ package acore.hack.features.gui.clickui.impl;
 import acore.hack.features.gui.clickui.AbstractElement;
 import acore.hack.setting.Setting;
 import acore.hack.setting.impl.Bind;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import org.lwjgl.glfw.GLFW;
 
 import java.awt.Color;
 
 public class BindElement extends AbstractElement {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     public boolean isListening = false;
     
     public BindElement(Setting setting) {
@@ -18,16 +21,16 @@ public class BindElement extends AbstractElement {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         hovered = isHovered(mouseX, mouseY);
         
-        context.drawTextWithShadow(textRenderer, setting.getName(),
+        context.drawTextWithShadow(mc.textRenderer, setting.getName(),
             (int)getSettingNameX(), (int)(y + height / 2f - 3f), Color.WHITE.getRGB());
         
         String bindText = getBindText();
-        float tWidth = textRenderer.getStringWidth(bindText);
+        float tWidth = mc.textRenderer.getStringWidth(bindText);
         
         context.fill((int)(x + width - tWidth - 11f), (int)(y + 2f),
             (int)(x + width - 7f), (int)(y + 12f), new Color(30, 30, 40).getRGB());
         
-        context.drawTextWithShadow(textRenderer, bindText,
+        context.drawTextWithShadow(mc.textRenderer, bindText,
             (int)(x + width - tWidth - 9f), (int)(y + height / 2f - 3f), Color.WHITE.getRGB());
     }
     
@@ -66,4 +69,4 @@ public class BindElement extends AbstractElement {
     private boolean isHovered(int mx, int my) {
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
-}
+    }
