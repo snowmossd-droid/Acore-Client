@@ -35,10 +35,10 @@ public class Managers {
    }
 
    public static void subscribe() {
-      ArisCore.EVENT_BUS.subscribe(NOTIFICATION);
-      ArisCore.EVENT_BUS.subscribe(SERVER);
-      ArisCore.EVENT_BUS.subscribe(PLAYER);
-      ArisCore.EVENT_BUS.subscribe(COMBAT);
-      ArisCore.EVENT_BUS.subscribe(ASYNC);
+      AcoreHack.EVENT_BUS.subscribe(NOTIFICATION);
+      AcoreHack.EVENT_BUS.subscribe(SERVER);
+      AcoreHack.EVENT_BUS.subscribe(PLAYER);
+      AcoreHack.EVENT_BUS.subscribe(COMBAT);
+      AcoreHack.EVENT_BUS.subscribe(ASYNC);
    }
-  }
+   }
