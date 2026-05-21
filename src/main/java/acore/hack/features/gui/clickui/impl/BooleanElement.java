@@ -2,11 +2,13 @@ package acore.hack.features.gui.clickui.impl;
 
 import acore.hack.features.gui.clickui.AbstractElement;
 import acore.hack.setting.Setting;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
 import java.awt.Color;
 
 public class BooleanElement extends AbstractElement {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     private float animation = 0f;
     
     public BooleanElement(Setting setting) {
@@ -24,7 +26,7 @@ public class BooleanElement extends AbstractElement {
         
         drawCheckbox(context, checkboxX, checkboxY, animation);
         
-        context.drawTextWithShadow(textRenderer, setting.getName(), 
+        context.drawTextWithShadow(mc.textRenderer, setting.getName(), 
             (int)getSettingNameX(), (int)(y + height / 2f - 3f), Color.WHITE.getRGB());
     }
     
@@ -49,4 +51,4 @@ public class BooleanElement extends AbstractElement {
     private boolean isHovered(int mx, int my) {
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
-}
+             }
