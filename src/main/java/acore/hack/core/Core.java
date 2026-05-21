@@ -50,6 +50,7 @@ public final class Core {
    public static boolean lockSprint;
    public static boolean serverSprint;
    public static boolean hold_mouse0;
+   public static BlockPos gps_position = null;
    public static final Map<String, Identifier> HEADS = new ConcurrentHashMap<>();
    public ArrayList<Packet<?>> silentPackets = new ArrayList<>();
    private final Timer lastPacket = new Timer();
@@ -67,7 +68,7 @@ public final class Core {
          }
          for (PlayerEntity p : Module.mc.world.getPlayers()) {
             if (p.isDead() || p.getHealth() == 0.0F) {
-               ArisCore.EVENT_BUS.post(new EventDeath(p));
+               AcoreHack.EVENT_BUS.post(new EventDeath(p));
             }
          }
          if (!Objects.equals(Managers.COMMAND.getPrefix(), ClientSettings.prefix.getValue())) {
@@ -132,12 +133,12 @@ public final class Core {
    }
 
    public void drawGps(DrawContext e) {
-      if (ArisCore.gps_position != null) {
-         float dst = this.getDistance(ArisCore.gps_position);
+      if (gps_position != null) {
+         float dst = this.getDistance(gps_position);
          float xOffset = Module.mc.getWindow().getScaledWidth() / 2.0F;
          float yOffset = Module.mc.getWindow().getScaledHeight() / 6.0F;
          float radius = 5.0F;
-         float yaw = getRotations(new Vec2f(ArisCore.gps_position.getX(), ArisCore.gps_position.getZ())) - Module.mc.player.getYaw();
+         float yaw = getRotations(new Vec2f(gps_position.getX(), gps_position.getZ())) - Module.mc.player.getYaw();
          float pointerHeight = 12.5F;
          float pointerCenterOffset = pointerHeight * 2.0F / 3.0F - 2.0F;
          float px = (float)(Math.sin(Math.toRadians(yaw)) * radius) + xOffset;
@@ -150,7 +151,7 @@ public final class Core {
          RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
          FontRenderers.modules.drawCenteredString(e.getMatrices(), "gps (" + dst + "m)", xOffset, yOffset + 20.0F, -1);
          if (dst < 10.0F) {
-            ArisCore.gps_position = null;
+            gps_position = null;
          }
       }
    }
@@ -204,4 +205,4 @@ public final class Core {
          matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(Math.abs(MathHelper.cos(var6 * (float)Math.PI - 0.2F) * h) * 0.3F));
       }
    }
-}
+   }
