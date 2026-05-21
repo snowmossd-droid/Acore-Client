@@ -1,12 +1,14 @@
 package acore.hack.features.gui.clickui.impl;
 
 import acore.hack.features.gui.clickui.ClickGUI;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.awt.Color;
 
 public class ThemeSelector {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     private float x, y, size;
     private boolean paletteOpen = false;
     private float themeAlphaAnim = 0f;
@@ -22,7 +24,7 @@ public class ThemeSelector {
         Color bg = new Color(25, 25, 28, 200);
         drawRoundedRect(context, x, y, size, size, size / 4f, bg);
         
-        context.drawTextWithShadow(textRenderer, "🎨", (int)(x + size / 2f - 5f), (int)(y + size / 2f - 5f), Color.WHITE.getRGB());
+        context.drawTextWithShadow(mc.textRenderer, "🎨", (int)(x + size / 2f - 5f), (int)(y + size / 2f - 5f), Color.WHITE.getRGB());
         
         if (hovered) {
             ClickGUI.anyHovered = true;
@@ -88,4 +90,4 @@ public class ThemeSelector {
     private void drawRoundedRect(DrawContext context, float x, float y, float w, float h, float r, Color color) {
         context.fill((int)x, (int)y, (int)(x + w), (int)(y + h), color.getRGB());
     }
-}
+            }
