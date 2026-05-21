@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.block.AirBlock;
 import net.minecraft.block.EnderChestBlock;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
@@ -86,10 +87,6 @@ public class AutoTool extends Module {
    }
 
    private static int getEnchantmentLevel(RegistryEntry<Enchantment> enchantment, ItemStack stack) {
-      if (mc.world == null) return 0;
-      RegistryEntry<Enchantment> targetEnchantment = mc.world.getRegistryManager()
-          .get(RegistryKeys.ENCHANTMENT)
-          .entryOf(enchantment.getKey().orElseThrow());
-      return EnchantmentHelper.getLevel(targetEnchantment, stack);
+      return EnchantmentHelper.getLevel(enchantment, stack);
    }
-   }
+      }
