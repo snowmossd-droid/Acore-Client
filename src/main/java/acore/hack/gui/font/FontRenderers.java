@@ -36,9 +36,9 @@ public class FontRenderers {
    @NotNull
    public static FontRenderer create(float size, String name) throws IOException, FontFormatException {
       return new FontRenderer(
-         Font.createFont(0, Objects.requireNonNull(ArisCore.class.getClassLoader().getResourceAsStream("assets/ariscore/fonts/" + name + ".ttf")))
+         Font.createFont(0, Objects.requireNonNull(AcoreHack.class.getClassLoader().getResourceAsStream("assets/acorehack/fonts/" + name + ".ttf")))
             .deriveFont(0, size / 2.0F),
          size / 2.0F
       );
    }
-}
+         }
