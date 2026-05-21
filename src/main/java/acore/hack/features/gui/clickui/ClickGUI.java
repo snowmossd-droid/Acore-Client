@@ -1,5 +1,6 @@
 package acore.hack.features.gui.clickui;
 
+import acore.hack.AcoreHack;
 import acore.hack.core.manager.ModuleManager;
 import acore.hack.features.gui.clickui.impl.SearchBar;
 import acore.hack.features.gui.clickui.impl.ThemeSelector;
@@ -7,8 +8,6 @@ import acore.hack.features.modules.Module;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.glfw.GLFW;
@@ -258,4 +257,4 @@ public class ClickGUI extends Screen {
         currentDescription = description;
         descriptionActive = true;
     }
-        }
+    }
