@@ -3,9 +3,9 @@ package acore.hack.utility.world;
 import java.util.Objects;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.DamageUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -252,4 +252,4 @@ public final class ExplosionUtility {
       int modifier = EnchantmentHelper.getLevel(protection, stack);
       return modifierBlast * 2 + modifier;
    }
-}
+   }
