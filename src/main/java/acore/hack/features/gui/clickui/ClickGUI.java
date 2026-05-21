@@ -7,6 +7,7 @@ import acore.hack.features.modules.Module;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
@@ -119,7 +120,7 @@ public class ClickGUI extends Screen {
         
         renderBottomBar(context, mouseX, mouseY, delta, animProgress);
         renderDescription(context);
-        renderHints(context.getMatrices());
+        renderHints(context);
         
         if (scrollY != 0f) {
             windows.forEach(w -> w.setModuleOffset(scrollY, mouseX, mouseY));
@@ -167,7 +168,7 @@ public class ClickGUI extends Screen {
         }
     }
     
-    private void renderHints(MatrixStack matrices) {
+    private void renderHints(DrawContext context) {
         List<String> hints = List.of(
             "Left Click: Enable/Disable",
             "Right Click: Open settings",
@@ -179,18 +180,18 @@ public class ClickGUI extends Screen {
         float startX = 8f;
         
         for (int i = 0; i < hints.size(); i++) {
-            drawOutlinedText(matrices, hints.get(i), startX, startY + i * lineHeight);
+            drawOutlinedText(context, hints.get(i), startX, startY + i * lineHeight);
         }
     }
     
-    private void drawOutlinedText(MatrixStack matrices, String text, float x, float y) {
+    private void drawOutlinedText(DrawContext context, String text, float x, float y) {
         int outlineColor = new Color(0, 0, 0, 255).getRGB();
         int fillColor = Color.WHITE.getRGB();
-        mc.textRenderer.draw(matrices, text, x - 0.45f, y, outlineColor);
-        mc.textRenderer.draw(matrices, text, x + 0.45f, y, outlineColor);
-        mc.textRenderer.draw(matrices, text, x, y - 0.45f, outlineColor);
-        mc.textRenderer.draw(matrices, text, x, y + 0.45f, outlineColor);
-        mc.textRenderer.draw(matrices, text, x, y, fillColor);
+        context.drawText(mc.textRenderer, text, (int)(x - 0.45f), (int)y, outlineColor, false);
+        context.drawText(mc.textRenderer, text, (int)(x + 0.45f), (int)y, outlineColor, false);
+        context.drawText(mc.textRenderer, text, (int)x, (int)(y - 0.45f), outlineColor, false);
+        context.drawText(mc.textRenderer, text, (int)x, (int)(y + 0.45f), outlineColor, false);
+        context.drawText(mc.textRenderer, text, (int)x, (int)y, fillColor, false);
     }
     
     private void drawRoundedRect(DrawContext context, float x, float y, float w, float h, float r, Color color) {
@@ -257,4 +258,4 @@ public class ClickGUI extends Screen {
         currentDescription = description;
         descriptionActive = true;
     }
-    }
+        }
