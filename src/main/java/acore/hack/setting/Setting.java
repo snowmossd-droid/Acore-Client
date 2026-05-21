@@ -286,6 +286,7 @@ public class Setting<T> {
       return this.value != v;
    }
 
+   @SuppressWarnings("unchecked")
    private T normalizeNumberValue(Number numberValue) {
       double value = numberValue.doubleValue();
       boolean restrictedNumber = this.hasRestriction && this.min instanceof Number && this.max instanceof Number;
@@ -318,8 +319,10 @@ public class Setting<T> {
          return (T) Long.valueOf(Math.round(value));
       } else if (numberValue instanceof Short) {
          return (T) Short.valueOf((short)Math.round(value));
+      } else if (numberValue instanceof Byte) {
+         return (T) Byte.valueOf((byte)Math.round(value));
       } else {
-         return (T) (numberValue instanceof Byte ? Byte.valueOf((byte)Math.round(value)) : Double.valueOf(value));
+         return (T) Double.valueOf(value);
       }
    }
 
@@ -351,4 +354,4 @@ public class Setting<T> {
       String formatted = BigDecimal.valueOf(value).setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
       return formatted.contains(".") ? formatted : formatted + ".0";
    }
-}
+         }
