@@ -480,7 +480,7 @@ public class Aura extends Module {
    public float getAttackCooldownProgressPerTick() {
       return (float)(
          1.0
-            / mc.player.getAttributeValue(EntityAttributes.ATTACK_SPEED)
+            /mc.player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_SPEED)
             * (20.0 * AcoreHack.TICK_TIMER * (this.timing.is(Aura.Timing.NEW) && this.tpsSync.getValue() ? 1.0F : 1.0F))
       );
    }
