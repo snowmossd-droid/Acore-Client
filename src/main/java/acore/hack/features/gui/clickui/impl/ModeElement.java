@@ -40,7 +40,7 @@ public class ModeElement extends AbstractElement {
         
         String value = setting.currentEnumName();
         context.drawTextWithShadow(mc.textRenderer, value,
-            (int)(x + width - 18f - mc.textRenderer.getStringWidth(value)), (int)(y + height / 2f - 3f), Color.WHITE.getRGB());
+            (int)(x + width - 18f - mc.textRenderer.getWidth(value)), (int)(y + height / 2f - 3f), Color.WHITE.getRGB());
         
         if (open) {
             float startX = x + 6f;
@@ -48,7 +48,7 @@ public class ModeElement extends AbstractElement {
             String[] modes = setting.getModes();
             
             for (int i = 0; i < modes.length; i++) {
-                float chipWidth = mc.textRenderer.getStringWidth(modes[i]) + 8f;
+                float chipWidth = mc.textRenderer.getWidth(modes[i]) + 8f;
                 float chipX = startX;
                 float chipY = startY + i * 14f;
                 
@@ -78,7 +78,7 @@ public class ModeElement extends AbstractElement {
             String[] modes = setting.getModes();
             
             for (int i = 0; i < modes.length; i++) {
-                float chipWidth = mc.textRenderer.getStringWidth(modes[i]) + 8f;
+                float chipWidth = mc.textRenderer.getWidth(modes[i]) + 8f;
                 if (mouseX >= startX && mouseX <= startX + chipWidth &&
                     mouseY >= startY + i * 14f && mouseY <= startY + i * 14f + 12f) {
                     setting.setEnumByNumber(i);
@@ -98,4 +98,4 @@ public class ModeElement extends AbstractElement {
     private boolean isHovered(int mx, int my) {
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
-                                   }
+            }
