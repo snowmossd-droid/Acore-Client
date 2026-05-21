@@ -14,7 +14,7 @@ import net.minecraft.registry.BuiltinRegistries;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.NotNull;
-// import acore.hack.core.manager.CommandManager;
+import acore.hack.AcoreHack;
 
 public abstract class Command {
    protected static final CommandRegistryAccess REGISTRY_ACCESS = CommandManager.createRegistryAccess(BuiltinRegistries.createWrapperLookup());
@@ -46,7 +46,7 @@ public abstract class Command {
 
    public static void sendMessage(String message) {
       if (mc.player != null) {
-         mc.player.sendMessage(Text.of(CommandManager.getClientMessage() + " " + message), false);
+         mc.player.sendMessage(Text.of("§7[§dAcoreHack§7] §f" + message), false);
       }
    }
 
@@ -79,4 +79,4 @@ public abstract class Command {
    public String getDescription() {
       return this.description;
    }
-  }
+         }
