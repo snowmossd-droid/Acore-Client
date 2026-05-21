@@ -2,11 +2,13 @@ package acore.hack.features.gui.clickui.impl;
 
 import acore.hack.features.gui.clickui.AbstractElement;
 import acore.hack.setting.Setting;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
 import java.awt.Color;
 
 public class StringElement extends AbstractElement {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     public boolean listening = false;
     private String currentString = "";
     
@@ -24,7 +26,7 @@ public class StringElement extends AbstractElement {
             ? currentString + ((System.currentTimeMillis() / 500 % 2 == 0) ? "_" : "")
             : (String)setting.getValue();
         
-        context.drawTextWithShadow(textRenderer, displayText,
+        context.drawTextWithShadow(mc.textRenderer, displayText,
             (int)getSettingNameX(), (int)(y + height / 2f), Color.WHITE.getRGB());
     }
     
@@ -41,7 +43,7 @@ public class StringElement extends AbstractElement {
     
     @Override
     public void charTyped(char key, int keyCode) {
-        if (listening && StringHelper.isValidChar(key)) {
+        if (listening && isValidChar(key)) {
             currentString += key;
         }
     }
@@ -59,6 +61,10 @@ public class StringElement extends AbstractElement {
                 currentString = currentString.substring(0, currentString.length() - 1);
             }
         }
+    }
+    
+    private boolean isValidChar(char key) {
+        return (key >= 'a' && key <= 'z') || (key >= 'A' && key <= 'Z') || (key >= '0' && key <= '9') || key == ' ';
     }
     
     private boolean isHovered(int mx, int my) {
