@@ -8,6 +8,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.c2s.play.UpdateSelectedSlotC2SPacket;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -64,13 +65,13 @@ public class AutoTool extends Module {
       for (int i = 0; i < 9; i++) {
          ItemStack stack = mc.player.getInventory().getStack(i);
          if (stack != ItemStack.EMPTY && (mc.player.getInventory().getStack(i).getMaxDamage() - mc.player.getInventory().getStack(i).getDamage() > 10 || !saveItem.getValue())) {
-            int efficiencyLevel = EnchantmentHelper.getLevel(Enchantments.EFFICIENCY, stack);
+            int efficiencyLevel = getEnchantmentLevel(Enchantments.EFFICIENCY, stack);
             float destroySpeed = stack.getMiningSpeedMultiplier(mc.world.getBlockState(pos));
             if (mc.world.getBlockState(pos).getBlock() instanceof AirBlock) {
                return -1;
             }
             if (mc.world.getBlockState(pos).getBlock() instanceof EnderChestBlock && echestSilk.getValue()) {
-               int silkLevel = EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, stack);
+               int silkLevel = getEnchantmentLevel(Enchantments.SILK_TOUCH, stack);
                if (silkLevel > 0 && efficiencyLevel + destroySpeed > CurrentFastest) {
                   CurrentFastest = efficiencyLevel + destroySpeed;
                   index = i;
@@ -82,5 +83,13 @@ public class AutoTool extends Module {
          }
       }
       return index;
+   }
+
+   private static int getEnchantmentLevel(RegistryEntry<Enchantment> enchantment, ItemStack stack) {
+      if (mc.world == null) return 0;
+      RegistryEntry<Enchantment> targetEnchantment = mc.world.getRegistryManager()
+          .get(RegistryKeys.ENCHANTMENT)
+          .entryOf(enchantment.getKey().orElseThrow());
+      return EnchantmentHelper.getLevel(targetEnchantment, stack);
    }
    }
