@@ -1,6 +1,7 @@
 package acore.hack.features.modules;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -97,25 +98,26 @@ public abstract class Module {
 
    protected void sendSequencedPacket(SequencedPacketCreator packetCreator) {
       if (mc.getNetworkHandler() != null && mc.world != null) {
-         PendingUpdateManager pendingUpdateManager = mc.world.getPendingUpdateManager().incrementSequence();
-
          try {
-            int i = pendingUpdateManager.getSequence();
+            Method method = net.minecraft.client.world.ClientWorld.class.getDeclaredMethod("getPendingUpdateManager");
+            method.setAccessible(true);
+            Object pendingUpdateManager = method.invoke(mc.world);
+            
+            Method incrementSequence = pendingUpdateManager.getClass().getDeclaredMethod("incrementSequence");
+            incrementSequence.setAccessible(true);
+            incrementSequence.invoke(pendingUpdateManager);
+            
+            Method getSequence = pendingUpdateManager.getClass().getDeclaredMethod("getSequence");
+            getSequence.setAccessible(true);
+            int i = (int) getSequence.invoke(pendingUpdateManager);
+            
             mc.getNetworkHandler().sendPacket(packetCreator.predict(i));
-         } catch (Throwable var6) {
-            if (pendingUpdateManager != null) {
-               try {
-                  pendingUpdateManager.close();
-               } catch (Throwable var5) {
-                  var6.addSuppressed(var5);
-               }
-            }
-
-            throw var6;
-         }
-
-         if (pendingUpdateManager != null) {
-            pendingUpdateManager.close();
+            
+            Method close = pendingUpdateManager.getClass().getDeclaredMethod("close");
+            close.setAccessible(true);
+            close.invoke(pendingUpdateManager);
+         } catch (Exception e) {
+            e.printStackTrace();
          }
       }
    }
@@ -440,6 +442,10 @@ public abstract class Module {
          return CATEGORIES.values();
       }
 
+      public static Module.Category[] getValuesArray() {
+         return CATEGORIES.values().toArray(new Module.Category[0]);
+      }
+
       public static boolean isCustomCategory(Module.Category category) {
          Set<String> predefinedCategoryNames = Set.of("Combat", "Misc", "Render", "Movement", "Player");
          return !predefinedCategoryNames.contains(category.getName());
@@ -470,4 +476,4 @@ public abstract class Module {
          CATEGORIES.put("Misc", MISC);
       }
    }
-   }
+                 }
