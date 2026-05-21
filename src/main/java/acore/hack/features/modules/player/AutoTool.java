@@ -66,13 +66,13 @@ public class AutoTool extends Module {
       for (int i = 0; i < 9; i++) {
          ItemStack stack = mc.player.getInventory().getStack(i);
          if (stack != ItemStack.EMPTY && (mc.player.getInventory().getStack(i).getMaxDamage() - mc.player.getInventory().getStack(i).getDamage() > 10 || !saveItem.getValue())) {
-            int efficiencyLevel = getEnchantmentLevel(Enchantments.EFFICIENCY, stack);
+            int efficiencyLevel = EnchantmentHelper.getLevel(Enchantments.EFFICIENCY, stack);
             float destroySpeed = stack.getMiningSpeedMultiplier(mc.world.getBlockState(pos));
             if (mc.world.getBlockState(pos).getBlock() instanceof AirBlock) {
                return -1;
             }
             if (mc.world.getBlockState(pos).getBlock() instanceof EnderChestBlock && echestSilk.getValue()) {
-               int silkLevel = getEnchantmentLevel(Enchantments.SILK_TOUCH, stack);
+               int silkLevel = EnchantmentHelper.getLevel(Enchantments.SILK_TOUCH, stack);
                if (silkLevel > 0 && efficiencyLevel + destroySpeed > CurrentFastest) {
                   CurrentFastest = efficiencyLevel + destroySpeed;
                   index = i;
@@ -85,8 +85,4 @@ public class AutoTool extends Module {
       }
       return index;
    }
-
-   private static int getEnchantmentLevel(RegistryEntry<Enchantment> enchantment, ItemStack stack) {
-      return EnchantmentHelper.getLevel(enchantment, stack);
    }
-      }
