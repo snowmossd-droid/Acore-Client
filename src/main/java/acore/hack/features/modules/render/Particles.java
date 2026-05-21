@@ -139,7 +139,7 @@ public class Particles extends Module {
          if (Module.mc == null) return true;
          ClientPlayerEntity player = Module.mc.player;
          if (player == null) return true;
-         if (player.distanceTo(new Vec3d(this.posX, this.posY, this.posZ)) > 4096.0) {
+         if (player.squaredDistanceTo(this.posX, this.posY, this.posZ) > 4096.0 * 4096.0) {
             this.age -= 8;
          } else {
             this.age--;
@@ -196,4 +196,4 @@ public class Particles extends Module {
       Drop,
       Fly;
    }
-      }
+   }
