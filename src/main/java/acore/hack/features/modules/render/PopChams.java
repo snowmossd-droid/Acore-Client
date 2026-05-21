@@ -5,19 +5,20 @@ import com.mojang.blaze3d.platform.GlStateManager.DstFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SrcFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.awt.Color;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import meteordevelopment.orbit.EventHandler;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
+import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.VertexFormat.DrawMode;
-import net.minecraft.client.render.entity.EntityRendererFactory.Context;
+import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.Entity.RemovalReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
@@ -27,7 +28,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import acore.hack.events.impl.TotemPopEvent;
 import acore.hack.features.modules.Module;
-import acore.hack.injection.accesors.IEntity;
 import acore.hack.setting.Setting;
 import acore.hack.setting.impl.ColorSetting;
 import acore.hack.utility.math.MathUtility;
@@ -69,14 +69,7 @@ public final class PopChams extends Module {
    @EventHandler
    private void onTotemPop(@NotNull TotemPopEvent e) {
       if (!e.getEntity().equals(mc.player) && mc.world != null) {
-         PlayerEntity entity = new PlayerEntity(mc.world, BlockPos.ORIGIN, e.getEntity().getUuid(), new GameProfile(e.getEntity().getUuid(), e.getEntity().getName().getString())) {
-            public boolean isSpectator() {
-               return false;
-            }
-            public boolean isCreative() {
-               return false;
-            }
-         };
+         OtherClientPlayerEntity entity = new OtherClientPlayerEntity(mc.world, new GameProfile(e.getEntity().getUuid(), e.getEntity().getName().getString()));
          entity.copyFrom(e.getEntity());
          entity.setUuid(e.getEntity().getUuid());
          entity.setPosition(e.getEntity().getX(), e.getEntity().getY(), e.getEntity().getZ());
@@ -85,11 +78,12 @@ public final class PopChams extends Module {
          entity.setSneaking(e.getEntity().isSneaking());
          entity.getAbilities().setFlySpeed(e.getEntity().getAbilities().getFlySpeed());
          entity.getAbilities().flying = e.getEntity().getAbilities().flying;
-         this.popList.add(new PopChams.Person(entity, ((AbstractClientPlayerEntity)e.getEntity()).getSkinTextures().texture()));
+         Identifier texture = ((AbstractClientPlayerEntity)e.getEntity()).getSkinTextures().texture();
+         this.popList.add(new PopChams.Person(entity, texture));
       }
    }
 
-   private void renderEntity(@NotNull MatrixStack matrices, @NotNull LivingEntity entity, @NotNull PlayerEntityModel<PlayerEntity> modelBase, Identifier texture, int alpha) {
+   private void renderEntity(@NotNull MatrixStack matrices, @NotNull net.minecraft.entity.LivingEntity entity, @NotNull PlayerEntityModel<PlayerEntity> modelBase, Identifier texture, int alpha) {
       modelBase.leftPants.visible = this.secondLayer.getValue();
       modelBase.rightPants.visible = this.secondLayer.getValue();
       modelBase.leftSleeve.visible = this.secondLayer.getValue();
@@ -99,7 +93,7 @@ public final class PopChams extends Module {
       double x = entity.getX() - mc.getEntityRenderDispatcher().camera.getPos().x;
       double y = entity.getY() - mc.getEntityRenderDispatcher().camera.getPos().y;
       double z = entity.getZ() - mc.getEntityRenderDispatcher().camera.getPos().z;
-      ((IEntity)entity).setPos(entity.getPos().add(0.0, this.ySpeed.getValue().intValue() / 50.0, 0.0));
+      
       matrices.push();
       matrices.translate((float)x, (float)y, (float)z);
       float yRotYaw = alpha / 255.0F * 360.0F * this.rotSpeed.getValue();
@@ -144,7 +138,8 @@ public final class PopChams extends Module {
 
       public Person(PlayerEntity player, Identifier texture) {
          this.player = player;
-         this.modelPlayer = new PlayerEntityModel(mc.getEntityRenderDispatcher().getEntityModelLoader().getModelPart(EntityModelLayers.PLAYER), false);
+         EntityRendererFactory.Context ctx = new EntityRendererFactory.Context(mc.getEntityRenderDispatcher(), mc.getItemRenderer(), mc.getBlockRenderManager(), mc.getEntityRenderDispatcher().getHeldItemRenderer(), mc.getResourceManager(), mc.getEntityModelLoader(), mc.textRenderer);
+         this.modelPlayer = new PlayerEntityModel<>(ctx.getPart(EntityModelLayers.PLAYER), false);
          this.modelPlayer.getHead().scale(new Vector3f(-0.3F, -0.3F, -0.3F));
          this.alpha = PopChams.this.color.getValue().getAlpha();
          this.texture = texture;
