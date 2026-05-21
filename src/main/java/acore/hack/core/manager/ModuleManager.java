@@ -80,6 +80,7 @@ import acore.hack.features.gui.clickui.ClickGUI;
 public class ModuleManager implements IManager {
    public ArrayList<Module> modules = new ArrayList<>();
    public List<Integer> activeMouseKeys = new ArrayList<>();
+   public static ModuleManager INSTANCE = new ModuleManager();
    public static TotemPopCounter totemPopCounter = new TotemPopCounter();
    public static ClientSettings clientSettings = new ClientSettings();
    public static Notifications notifications = new Notifications();
