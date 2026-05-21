@@ -3,11 +3,13 @@ package acore.hack.features.gui.clickui.impl;
 import acore.hack.features.gui.clickui.AbstractElement;
 import acore.hack.setting.Setting;
 import acore.hack.setting.impl.SettingGroup;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
 import java.awt.Color;
 
 public class ParentElement extends AbstractElement {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     private final Setting<SettingGroup> parentSetting;
     private float animation = 0f;
     
@@ -22,11 +24,11 @@ public class ParentElement extends AbstractElement {
         
         animation += ((parentSetting.getValue().isExtended() ? 0f : 1f) - animation) * 0.1f;
         
-        context.drawTextWithShadow(textRenderer, setting.getName(),
+        context.drawTextWithShadow(mc.textRenderer, setting.getName(),
             (int)getSettingNameX(), (int)(y + height / 2f - 3f), Color.WHITE.getRGB());
         
         String arrow = parentSetting.getValue().isExtended() ? "▼" : "▶";
-        context.drawTextWithShadow(textRenderer, arrow,
+        context.drawTextWithShadow(mc.textRenderer, arrow,
             (int)(x + width - 14f), (int)(y + height / 2f - 3f), Color.GRAY.getRGB());
     }
     
@@ -41,4 +43,4 @@ public class ParentElement extends AbstractElement {
     private boolean isHovered(int mx, int my) {
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
-}
+                                          }
