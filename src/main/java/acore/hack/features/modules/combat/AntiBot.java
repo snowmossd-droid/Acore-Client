@@ -212,4 +212,4 @@ public final class AntiBot extends Module {
    public enum Mode {
       Matrix;
    }
-   }
+}
