@@ -184,7 +184,8 @@ public final class InteractionUtility {
    @Nullable
    public static BlockHitResult getPlaceResult(@NotNull BlockPos bp, Interact interact, boolean ignoreEntities) {
       if (!ignoreEntities) {
-         for (Entity entity : new ArrayList(Module.mc.world.getEntitiesByClass(Entity.class, new Box(bp), e -> true))) {
+         List<Entity> entities = Module.mc.world.getEntitiesByClass(Entity.class, new Box(bp), e -> true);
+         for (Entity entity : entities) {
             if (!(entity instanceof ItemEntity) && !(entity instanceof ExperienceOrbEntity)) {
                return null;
             }
@@ -376,4 +377,4 @@ public final class InteractionUtility {
    public enum Interact { Vanilla, Strict, Legit, AirPlace }
    public enum PlaceMode { Packet, Normal }
    public enum Rotate { None, Default, Grim }
-     }
+}
