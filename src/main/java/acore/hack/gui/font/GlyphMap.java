@@ -132,9 +132,8 @@ class GlyphMap {
          int ow = bi.getWidth();
          int oh = bi.getHeight();
          NativeImage image = new NativeImage(Format.RGBA, ow, oh, false);
-         long ptr = image.getPointer();
+         long ptr = ((INativeImage)(Object)image).getPointer();
          IntBuffer backingBuffer = MemoryUtil.memIntBuffer(ptr, image.getWidth() * image.getHeight());
-         int off = 0;
          WritableRaster _ra = bi.getRaster();
          ColorModel _cm = bi.getColorModel();
          int nbands = _ra.getNumBands();
@@ -172,4 +171,4 @@ class GlyphMap {
          e.printStackTrace();
       }
    }
-                   }
+         }
