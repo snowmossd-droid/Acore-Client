@@ -13,6 +13,7 @@ import net.minecraft.entity.projectile.thrown.EggEntity;
 import net.minecraft.entity.projectile.thrown.ExperienceBottleEntity;
 import net.minecraft.entity.projectile.thrown.PotionEntity;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
+import acore.hack.AcoreHack;
 import acore.hack.core.Managers;
 import acore.hack.events.impl.EventSync;
 import acore.hack.events.impl.PacketEvent;
@@ -118,16 +119,16 @@ public class NoRender extends Module {
 
       if (this.auto.getValue()) {
          if (this.arrowCounter > 64) {
-            AcoreHack.NOTIFICATION.publicity("NoRender", "Arrows limit reached! Removing...", 3, Notification.Type.SUCCESS);
+            Managers.NOTIFICATION.publicity("NoRender", "Arrows limit reached! Removing...", 3, Notification.Type.SUCCESS);
          }
          if (this.itemsCounter > 16) {
-            AcoreHack.NOTIFICATION.publicity("NoRender", "Item limit reached! Removing...", 3, Notification.Type.SUCCESS);
+            Managers.NOTIFICATION.publicity("NoRender", "Item limit reached! Removing...", 3, Notification.Type.SUCCESS);
          }
          if (this.xpCounter > 16) {
-            AcoreHack.NOTIFICATION.publicity("NoRender", "XP orbs limit reached! Removing...", 3, Notification.Type.SUCCESS);
+            Managers.NOTIFICATION.publicity("NoRender", "XP orbs limit reached! Removing...", 3, Notification.Type.SUCCESS);
          }
          if (this.potionCouter > 8) {
-            AcoreHack.NOTIFICATION.publicity("NoRender", "Potions limit reached! Removing...", 3, Notification.Type.SUCCESS);
+            Managers.NOTIFICATION.publicity("NoRender", "Potions limit reached! Removing...", 3, Notification.Type.SUCCESS);
          }
          List<Integer> toRemove = new ArrayList<>();
          for (Entity ent : Managers.ASYNC.getAsyncEntities()) {
@@ -154,4 +155,4 @@ public class NoRender extends Module {
       this.potionCouter = 0;
       this.xpCounter = 0;
    }
-}
+   }
