@@ -35,7 +35,7 @@ public class ModuleButton extends AbstractButton {
             } else if (setting.getValue() instanceof ColorSetting) {
                 elements.add(new ColorPickerElement(setting));
             } else if (setting.getValue() instanceof BooleanSettingGroup) {
-                elements.add(new BooleanParentElement((Setting<BooleanSettingGroup>) setting));
+                // elements.add(new BooleanParentElement((Setting<BooleanSettingGroup>) setting));
             } else if (setting.isNumberSetting() && setting.hasRestriction()) {
                 elements.add(new SliderElement(setting));
             } else if (setting.isEnumSetting()) {
@@ -76,13 +76,13 @@ public class ModuleButton extends AbstractButton {
             String bindText = getBindText();
             if (!bindText.equals("None")) {
                 context.drawTextWithShadow(mc.textRenderer, bindText, 
-                    (int)(x + width - 11f - mc.textRenderer.getStringWidth(bindText)), 
+                    (int)(x + width - 11f - mc.textRenderer.getWidth(bindText)), 
                     (int)textY, module.isEnabled() ? Color.CYAN.getRGB() : Color.GRAY.getRGB());
             }
         } else {
             String bindMsg = holdbind ? Formatting.GRAY + "Hold" : "Toggle";
             context.drawTextWithShadow(mc.textRenderer, bindMsg,
-                (int)(x + width - 11f - mc.textRenderer.getStringWidth(bindMsg)),
+                (int)(x + width - 11f - mc.textRenderer.getWidth(bindMsg)),
                 (int)textY, Color.WHITE.getRGB());
             context.drawTextWithShadow(mc.textRenderer, "Press key...",
                 (int)(x + 6f), (int)textY, Color.WHITE.getRGB());
@@ -227,4 +227,4 @@ public class ModuleButton extends AbstractButton {
         }
         return target;
     }
-                        }
+                    }
