@@ -207,19 +207,12 @@ public final class Criticals extends Module {
    }
 
    public static Criticals.InteractType getInteractType(@NotNull PlayerInteractEntityC2SPacket packet) {
-      try {
-         Method getType = PlayerInteractEntityC2SPacket.class.getDeclaredMethod("getType");
-         getType.setAccessible(true);
-         Object type = getType.invoke(packet);
-         String typeName = type.toString();
-         if (typeName.contains("ATTACK")) {
-            return Criticals.InteractType.ATTACK;
-         } else if (typeName.contains("INTERACT")) {
-            return Criticals.InteractType.INTERACT;
-         } else {
-            return Criticals.InteractType.INTERACT_AT;
-         }
-      } catch (Exception e) {
+      String packetStr = packet.toString();
+      if (packetStr.contains("ATTACK")) {
+         return Criticals.InteractType.ATTACK;
+      } else if (packetStr.contains("INTERACT_AT")) {
+         return Criticals.InteractType.INTERACT_AT;
+      } else {
          return Criticals.InteractType.INTERACT;
       }
    }
