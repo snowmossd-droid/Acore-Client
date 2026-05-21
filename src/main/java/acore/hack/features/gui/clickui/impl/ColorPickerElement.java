@@ -3,11 +3,13 @@ package acore.hack.features.gui.clickui.impl;
 import acore.hack.features.gui.clickui.AbstractElement;
 import acore.hack.setting.Setting;
 import acore.hack.setting.impl.ColorSetting;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
 import java.awt.Color;
 
 public class ColorPickerElement extends AbstractElement {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     private boolean extended = false;
     private final Setting<?> colorSetting;
     
@@ -24,7 +26,7 @@ public class ColorPickerElement extends AbstractElement {
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         hovered = isHovered(mouseX, mouseY);
         
-        context.drawTextWithShadow(textRenderer, setting.getName(),
+        context.drawTextWithShadow(mc.textRenderer, setting.getName(),
             (int)getSettingNameX(), (int)(y + 5f), Color.WHITE.getRGB());
         
         float swatchX = x + width - 22f;
@@ -41,7 +43,7 @@ public class ColorPickerElement extends AbstractElement {
             context.fill((int)pickerX, (int)pickerY, (int)(pickerX + pickerW), (int)(pickerY + pickerH), new Color(40, 40, 50).getRGB());
             
             // Hue bar
-            for (int i = 0; i < pickerH; i++) {
+            for (int i = 0; i < (int)pickerH; i++) {
                 float hue = 1f - (i / pickerH);
                 context.fill((int)(pickerX + pickerW + 4), (int)(pickerY + i), 
                     (int)(pickerX + pickerW + 12), (int)(pickerY + i + 1), Color.getHSBColor(hue, 1f, 1f).getRGB());
@@ -67,4 +69,4 @@ public class ColorPickerElement extends AbstractElement {
     private boolean isHovered(int mx, int my) {
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
-}
+        }
