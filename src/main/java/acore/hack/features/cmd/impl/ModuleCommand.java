@@ -46,7 +46,7 @@ public class ModuleCommand extends Command {
                s.setValue(s.getDefaultValue());
             }
          }
-         if (module instanceof ClickGuiModule clickGui) {
+         if (module instanceof ClickGui clickGui) {
             clickGui.applyFontSettings();
          }
          return 1;
@@ -84,7 +84,7 @@ public class ModuleCommand extends Command {
             sendMessage("Bad Value! This setting requires a: " + setting.getValue().getClass().getSimpleName());
             return 1;
          }
-         if (module instanceof ClickGuiModule clickGui && (setting == clickGui.settingFontScale || setting == clickGui.modulesFontScale)) {
+         if (module instanceof ClickGui clickGui && (setting == clickGui.settingFontScale || setting == clickGui.modulesFontScale)) {
             clickGui.applyFontSettings();
          }
          if (settingValue.contains("toggle")) {
