@@ -1,6 +1,7 @@
 package acore.hack.features.modules.combat;
 
 import io.netty.buffer.Unpooled;
+import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import meteordevelopment.orbit.EventHandler;
@@ -154,14 +155,26 @@ public final class CrystalOptimizer extends Module {
    }
 
    private int getEntityId(@NotNull PlayerInteractEntityC2SPacket packet) {
-      PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
-      packet.write(packetBuf);
-      return packetBuf.readVarInt();
+      try {
+         Method getEntityId = PlayerInteractEntityC2SPacket.class.getDeclaredMethod("getEntityId");
+         getEntityId.setAccessible(true);
+         return (int) getEntityId.invoke(packet);
+      } catch (Exception e) {
+         PacketByteBuf packetBuf = new PacketByteBuf(Unpooled.buffer());
+         try {
+            Method write = PlayerInteractEntityC2SPacket.class.getDeclaredMethod("write", PacketByteBuf.class);
+            write.setAccessible(true);
+            write.invoke(packet, packetBuf);
+            return packetBuf.readVarInt();
+         } catch (Exception ex) {
+            return -1;
+         }
+      }
    }
 
    private Entity getEntityFromPacket(@NotNull PlayerInteractEntityC2SPacket packet) {
       int entityId = this.getEntityId(packet);
-      if (mc.world != null) {
+      if (mc.world != null && entityId != -1) {
          return mc.world.getEntityById(entityId);
       }
       return null;
@@ -182,4 +195,4 @@ public final class CrystalOptimizer extends Module {
          || stack.getItem() instanceof AxeItem
          || stack.getItem() instanceof ShovelItem;
    }
-   }
+}
