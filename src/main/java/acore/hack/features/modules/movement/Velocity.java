@@ -4,6 +4,7 @@ import meteordevelopment.orbit.EventHandler;
 import acore.hack.events.impl.EventFixVelocity;
 import acore.hack.features.modules.Module;
 import acore.hack.setting.Setting;
+import net.minecraft.util.math.Vec3d;
 
 public class Velocity extends Module {
     public final Setting<Boolean> horizontal = new Setting<>("Horizontal", true);
@@ -20,12 +21,19 @@ public class Velocity extends Module {
         
         double multiplier = strength.getValue() / 100.0;
         
+        Vec3d velocity = event.getVelocity();
+        double x = velocity.x;
+        double y = velocity.y;
+        double z = velocity.z;
+        
         if (horizontal.getValue()) {
-            event.x = event.x * multiplier;
-            event.z = event.z * multiplier;
+            x = x * multiplier;
+            z = z * multiplier;
         }
         if (vertical.getValue()) {
-            event.y = event.y * multiplier;
+            y = y * multiplier;
         }
+        
+        event.setVelocity(new Vec3d(x, y, z));
     }
-}
+                }
