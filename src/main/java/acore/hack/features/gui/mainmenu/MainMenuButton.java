@@ -1,10 +1,12 @@
 package acore.hack.features.gui.mainmenu;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
 import java.awt.Color;
 
 public class MainMenuButton {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     private final float x, y, width, height, radius;
     private final String label;
     private final IconType iconType;
@@ -27,7 +29,7 @@ public class MainMenuButton {
         context.fill((int)x, (int)y, (int)(x + width), (int)(y + height), bg.getRGB());
         
         String icon = getIcon();
-        context.drawCenteredTextWithShadow(textRenderer, icon, (int)(x + width / 2f), (int)(y + height / 2f - 4f), 
+        context.drawCenteredTextWithShadow(mc.textRenderer, icon, (int)(x + width / 2f), (int)(y + height / 2f - 4f), 
             hovered ? Color.CYAN.getRGB() : Color.WHITE.getRGB());
     }
     
@@ -57,4 +59,4 @@ public class MainMenuButton {
     public enum IconType {
         SINGLEPLAYER, MULTIPLAYER, ALT, SETTING, LEAVE
     }
-                                                                }
+}
