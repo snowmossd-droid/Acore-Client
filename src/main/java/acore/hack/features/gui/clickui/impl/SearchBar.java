@@ -4,12 +4,12 @@ import acore.hack.features.gui.clickui.ClickGUI;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.util.StringHelper;
 import org.lwjgl.glfw.GLFW;
 
 import java.awt.Color;
 
 public class SearchBar {
+    private static final MinecraftClient mc = MinecraftClient.getInstance();
     private static String moduleName = "";
     private static boolean listening = false;
     
@@ -53,8 +53,8 @@ public class SearchBar {
             textColor = Color.WHITE.getRGB();
         }
         
-        float textY = y + (height - textRenderer.fontHeight) / 2f + 3f;
-        context.drawTextWithShadow(textRenderer, displayText, (int)(x + 9f), (int)textY, textColor);
+        float textY = y + (height - mc.textRenderer.fontHeight) / 2f + 3f;
+        context.drawTextWithShadow(mc.textRenderer, displayText, (int)(x + 9f), (int)textY, textColor);
         
         if (hovered) {
             ClickGUI.anyHovered = true;
@@ -72,7 +72,7 @@ public class SearchBar {
     public void mouseReleased(int mouseX, int mouseY, int button) {}
     
     public void charTyped(char key, int keyCode) {
-        if (StringHelper.isValidChar(key) && listening) {
+        if (isValidChar(key) && listening) {
             moduleName += key;
         }
     }
@@ -96,6 +96,10 @@ public class SearchBar {
     
     public void tick() {}
     
+    private boolean isValidChar(char key) {
+        return (key >= 'a' && key <= 'z') || (key >= 'A' && key <= 'Z') || (key >= '0' && key <= '9') || key == ' ';
+    }
+    
     private boolean isHovered(int mx, int my) {
         return mx >= x && mx <= x + width && my >= y && my <= y + height;
     }
@@ -103,4 +107,4 @@ public class SearchBar {
     private void drawRoundedRect(DrawContext context, float x, float y, float w, float h, float r, Color color) {
         context.fill((int)x, (int)y, (int)(x + w), (int)(y + h), color.getRGB());
     }
-}
+        }
