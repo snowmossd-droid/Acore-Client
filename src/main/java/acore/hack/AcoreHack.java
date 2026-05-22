@@ -39,6 +39,9 @@ public class AcoreHack implements ClientModInitializer {
     public static KeyBinding openGuiKey;
     public static KeyBinding reloadConfigKey;
 
+    private SoundManager soundManager;
+    private ModuleManager moduleManager;
+
     static {
         Runtime.getRuntime().addShutdownHook(new ManagerShutdownHook());
         Runtime.getRuntime().addShutdownHook(new ModuleShutdownHook());
@@ -54,6 +57,9 @@ public class AcoreHack implements ClientModInitializer {
 
         Managers.init();
         Managers.subscribe();
+
+        soundManager = new SoundManager();
+        moduleManager = new ModuleManager();
 
         openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
             "key.acorehack.openGui",
@@ -77,17 +83,17 @@ public class AcoreHack implements ClientModInitializer {
                     if (clickGUI == null) clickGUI = new ClickGUI();
                     client.setScreen(clickGUI);
                 }
-                SoundManager.playClickSound();
+                soundManager.playClickSound();
             }
 
             if (reloadConfigKey.wasPressed()) {
                 ConfigManager.getInstance().reloadConfig();
-                SoundManager.playClickSound();
+                soundManager.playClickSound();
                 LOGGER.info("[AcoreHack] Config reloaded!");
             }
 
             if (client.currentScreen == null) {
-                ModuleManager.onUpdate();
+                moduleManager.onUpdate();
             }
 
             silentPackets.clear();
