@@ -41,10 +41,6 @@ dependencies {
     include(modImplementation("org.ladysnake:satin:${project.satin_version}"))
 }
 
-loom {
-    accessWidenerPath = file("src/main/resources/acorehack.accesswidener")
-}
-
 processResources {
     inputs.property "version", project.version
     inputs.property "minecraft_version", project.minecraft_version
