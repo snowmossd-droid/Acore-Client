@@ -11,6 +11,7 @@ import net.minecraft.entity.DamageUtil;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.BedItem;
 import net.minecraft.item.Item;
@@ -54,7 +55,7 @@ public final class InventoryUtility {
       for (int b1 = 9; b1 < 45; b1++) {
          ItemStack itemStack = Module.mc.player.getInventory().getStack(b1 >= 36 ? b1 - 36 : b1);
          if (itemStack != null && itemStack.getItem() instanceof AxeItem axe) {
-            float f1 = axe.getMaxDamage();
+            float f1 = axe.getMaxDamage(itemStack);
             f1 += EnchantmentHelper.getLevel(Module.mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.SHARPNESS).get(), itemStack);
             if (f1 > f) {
                f = f1;
@@ -136,7 +137,7 @@ public final class InventoryUtility {
       for (int b1 = 9; b1 < 45; b1++) {
          ItemStack itemStack = Module.mc.player.getInventory().getStack(b1 >= 36 ? b1 - 36 : b1);
          if (itemStack != null && itemStack.getItem() instanceof SwordItem sword) {
-            float f1 = sword.getMaxDamage();
+            float f1 = sword.getMaxDamage(itemStack);
             f1 += EnchantmentHelper.getLevel(Module.mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.SHARPNESS).get(), itemStack);
             if (f1 > f) {
                f = f1;
@@ -156,7 +157,7 @@ public final class InventoryUtility {
       for (int b1 = 0; b1 < 9; b1++) {
          ItemStack itemStack = Module.mc.player.getInventory().getStack(b1);
          if (itemStack != null && itemStack.getItem() instanceof SwordItem sword) {
-            float f1 = sword.getMaxDamage();
+            float f1 = sword.getMaxDamage(itemStack);
             f1 += EnchantmentHelper.getLevel(Module.mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.SHARPNESS).get(), itemStack);
             if (f1 > f) {
                f = f1;
@@ -176,7 +177,7 @@ public final class InventoryUtility {
       for (int b1 = 0; b1 < 9; b1++) {
          ItemStack itemStack = Module.mc.player.getInventory().getStack(b1);
          if (itemStack != null && itemStack.getItem() instanceof AxeItem axe) {
-            float f1 = axe.getMaxDamage();
+            float f1 = axe.getMaxDamage(itemStack);
             f1 += EnchantmentHelper.getLevel(Module.mc.world.getRegistryManager().getOrThrow(RegistryKeys.ENCHANTMENT).getEntry(Enchantments.SHARPNESS).get(), itemStack);
             if (f1 > f) {
                f = f1;
@@ -393,4 +394,5 @@ public final class InventoryUtility {
    public interface Searcher {
       boolean isValid(ItemStack var1);
    }
-             }
+          }
+            
