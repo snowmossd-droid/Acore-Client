@@ -9,6 +9,8 @@ public class EventBus {
     static {
         EVENT_BUS.registerLambdaFactory("acore.hack.event.impl", (lookupInMethod, klass) ->
             (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
+        EVENT_BUS.registerLambdaFactory("acore.hack", (lookupInMethod, klass) ->
+            (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
     }
 
     public void subscribe(Object object) {
