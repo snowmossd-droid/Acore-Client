@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.Manifest;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.metadata.Person;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
@@ -25,7 +26,9 @@ public final class ThunderUtility {
 
    @NotNull
    public static String getAuthors() {
-      List<String> names = ArisCore.MOD_META.getAuthors().stream().<String>map(Person::getName).toList();
+      List<String> names = FabricLoader.getInstance().getModContainer("acorehack")
+         .map(mod -> mod.getMetadata().getAuthors().stream().<String>map(Person::getName).toList())
+         .orElse(List.of());
       return String.join(", ", names);
    }
 
@@ -68,4 +71,5 @@ public final class ThunderUtility {
       }
       return "0";
    }
-           }
+         }
+                             
