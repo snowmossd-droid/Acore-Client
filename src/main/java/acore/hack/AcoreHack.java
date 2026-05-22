@@ -54,7 +54,7 @@ public class AcoreHack implements ClientModInitializer {
 
         LOGGER.info("[AcoreHack] Initializing...");
 
-        meteordevelopment.orbit.EventBus.registerLambdaFactory("acore.hack", (lookupInMethod, klass) -> {
+        EVENT_BUS.registerLambdaFactory("acore.hack", (lookupInMethod, klass) -> {
             return (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup());
         });
 
