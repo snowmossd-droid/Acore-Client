@@ -24,7 +24,6 @@ repositories {
         name = "JitPack"
         url = "https://jitpack.io"
     }
-    // Ladysnake Maven - chứa Satin
     maven {
         name = "Ladysnake"
         url = "https://maven.ladysnake.org/releases"
@@ -36,19 +35,17 @@ dependencies {
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    
-    // Orbit event bus
-    modImplementation 'com.github.MeteorDevelopment:orbit:0.2.3'
-    
-    // Satin - BỎ 'include' nếu gây lỗi
-    modImplementation "org.ladysnake:satin:${project.satin_version}"
+
+    include(modImplementation('com.github.MeteorDevelopment:orbit:0.2.3'))
+
+    include(modImplementation("org.ladysnake:satin:${project.satin_version}"))
 }
 
 processResources {
     inputs.property "version", project.version
     inputs.property "minecraft_version", project.minecraft_version
     inputs.property "loader_version", project.loader_version
-    
+
     filesMatching("fabric.mod.json") {
         expand (
             "version": project.version,
