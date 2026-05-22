@@ -76,7 +76,7 @@ public final class ExplosionUtility {
                } else if (Module.mc.world.getDifficulty() == Difficulty.HARD) {
                   toDamage = toDamage * 3.0F / 2.0F;
                }
-               double armorToughness = target.getAttributeValue(EntityAttributes.ARMOR_TOUGHNESS);
+               double armorToughness = target.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS);
                toDamage = DamageUtil.getDamageLeft(target, toDamage, ((IExplosion)explosion).getDamageSource(), target.getArmor(), (float)armorToughness);
                if (target.hasStatusEffect(StatusEffects.RESISTANCE)) {
                   int resistance = 25 - (target.getStatusEffect(StatusEffects.RESISTANCE).getAmplifier() + 1) * 5;
@@ -130,7 +130,7 @@ public final class ExplosionUtility {
                } else if (Module.mc.world.getDifficulty() == Difficulty.HARD) {
                   toDamage = toDamage * 3.0F / 2.0F;
                }
-               double armorToughness = target.getAttributeValue(EntityAttributes.ARMOR_TOUGHNESS);
+               double armorToughness = target.getAttributeValue(EntityAttributes.GENERIC_ARMOR_TOUGHNESS);
                toDamage = DamageUtil.getDamageLeft(target, toDamage, ((IExplosion)explosion).getDamageSource(), target.getArmor(), (float)armorToughness);
                if (target.hasStatusEffect(StatusEffects.RESISTANCE)) {
                   int resistance = 25 - (target.getStatusEffect(StatusEffects.RESISTANCE).getAmplifier() + 1) * 5;
