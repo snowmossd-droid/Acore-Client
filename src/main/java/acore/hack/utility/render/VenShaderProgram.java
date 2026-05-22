@@ -9,11 +9,17 @@ public class VenShaderProgram {
    protected final ShaderProgram program;
 
    public VenShaderProgram(String vertex, String fragment) {
-      this.program = new ShaderProgram(
-         MinecraftClient.getInstance().getResourceManager(),
-         "ariscore:shaders/core/" + vertex,
-         VertexFormats.POSITION_COLOR
-      );
+      ShaderProgram p;
+      try {
+         p = new ShaderProgram(
+            MinecraftClient.getInstance().getResourceManager(),
+            "ariscore:shaders/core/" + vertex,
+            VertexFormats.POSITION_COLOR
+         );
+      } catch (Exception e) {
+         throw new RuntimeException("Failed to create shader program: " + vertex, e);
+      }
+      this.program = p;
    }
 
    public void use() {
@@ -58,4 +64,4 @@ public class VenShaderProgram {
          uniform.set(v1, v2, v3, v4);
       }
    }
-}
+                          }
