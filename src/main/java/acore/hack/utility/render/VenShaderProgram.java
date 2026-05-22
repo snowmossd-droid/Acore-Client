@@ -1,6 +1,6 @@
 package acore.hack.utility.render;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.ShaderProgram;
 import net.minecraft.client.gl.Uniform;
 import net.minecraft.util.Identifier;
@@ -10,8 +10,8 @@ public class VenShaderProgram {
 
    public VenShaderProgram(String vertex, String fragment) {
       this.program = new ShaderProgram(
-         RenderSystem.getResourceFactory(), 
-         Identifier.of("ariscore", "shaders/core/" + vertex + ".vsh"), 
+         MinecraftClient.getInstance().getResourceManager(),
+         Identifier.of("ariscore", "shaders/core/" + vertex + ".vsh"),
          Identifier.of("ariscore", "shaders/core/" + fragment + ".fsh")
       );
    }
@@ -58,4 +58,5 @@ public class VenShaderProgram {
          uniform.set(v1, v2, v3, v4);
       }
    }
-   }
+                          }
+            
