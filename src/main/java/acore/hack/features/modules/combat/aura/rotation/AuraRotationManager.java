@@ -47,7 +47,7 @@ public final class AuraRotationManager {
                this.aura.snapTicks.getValue() <= 1
                   || Aura.mc
                      .world
-                     .getEntitiesIncludingUngeneratedChunks(null, Aura.mc.player.getBoundingBox().expand(-0.25, 0.0, -0.25).offset(0.0, 1.0, 0.0))
+                     .getNonSpectatingEntities(Entity.class, Aura.mc.player.getBoundingBox().expand(-0.25, 0.0, -0.25).offset(0.0, 1.0, 0.0))
                      .iterator()
                      .hasNext()
             );
