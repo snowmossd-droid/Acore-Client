@@ -22,7 +22,10 @@
   },
   "custom": {
     "meteordevelopment:orbit": {
-      "lambda_factories": ["meteordevelopment.orbit.lwjgl.LwjglLambdaFactory"]
+      "lambda_factories": [
+        "meteordevelopment.orbit.lwjgl.LwjglLambdaFactory",
+        "meteordevelopment.orbit.asm.ASMLambdaFactory"
+      ]
     }
   }
 }
