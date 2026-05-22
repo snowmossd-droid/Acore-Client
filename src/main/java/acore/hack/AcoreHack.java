@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.lwjgl.glfw.GLFW;
 
-import java.lang.invoke.MethodHandles;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,8 +52,6 @@ public class AcoreHack implements ClientModInitializer {
         INSTANCE = this;
 
         LOGGER.info("[AcoreHack] Initializing...");
-
-        EVENT_BUS.registerLambdaFactory("acore.hack", (lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
 
         EVENT_BUS.subscribe(core);
 
@@ -105,4 +102,4 @@ public class AcoreHack implements ClientModInitializer {
         LOGGER.info("[AcoreHack] Initialized! Press P to open GUI");
         LOGGER.info("[AcoreHack] Config folder: .minecraft/acorehack/configs/");
     }
-                                                                                                                              }
+    }
